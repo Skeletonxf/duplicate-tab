@@ -1,6 +1,6 @@
 {
   "description": "Duplicates the current tab",
-  "homepage_url": "",
+  "homepage_url": "https://github.com/Skeletonxf/duplicate-tab/",
   "manifest_version": 2,
   "name": "Duplicate tab",
   "version": "1.0",

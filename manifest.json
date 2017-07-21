@@ -1,0 +1,23 @@
+{
+  "description": "Duplicates the current tab",
+  "homepage_url": "",
+  "manifest_version": 2,
+  "name": "Duplicate tab",
+  "version": "1.0",
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+  
+  "permissions": ["tabs"],
+
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": {
+       "16": "icons/fork-16.png",
+       "32": "icons/fork-32.png",
+       "64": "icons/fork-64.png"
+    },
+    "default_title": "Duplicate tab"
+  }
+}

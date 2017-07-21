@@ -7,9 +7,6 @@ function duplicate() {
   })
   // duplicate the new tab using the id of the current tab from the Promise
   gettingActiveTab.then(function(tabs) {
-    //console.log(tabs.length) debugging only
-    //console.log(tabs[0]) debugging only
-
     // get the url of the (only) item in the array to duplicate it
     browser.tabs.create({
       url: tabs[0].url,

@@ -7,11 +7,10 @@ function duplicate() {
   })
   // duplicate the new tab using the id of the current tab from the Promise
   gettingActiveTab.then(function(tabs) {
-    // get the url of the (only) item in the array to duplicate it
-    browser.tabs.create({
-      url: tabs[0].url,
-      // create the new tab just after the current tab
-      index: tabs[0].index + 1
+    // get the id of the (only) item in the array to duplicate it
+    browser.tabs.duplicate(tabs[0].id).then(function(tab) {
+      // now change the focus to the new tab
+      browser.tabs.update(tab.id, {activate: true})
     })
   })
 }

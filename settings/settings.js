@@ -4,24 +4,34 @@ function logError(e) {
   console.log(`Error: ${e}`)
 }
 
-function restore() {
-  browser.storage.local.get("switchFocus").then((r) => {
-    // switch focus by default
-    let value = true
-    if ('switchFocus' in r) {
-      value = r.switchFocus
-    }
-    document.querySelector("#switchFocus").checked = value
-  }, logError)
+let defaults = {
+  switchFocus : true,
+  tabContext : true
 }
 
-function switchFocus(e) {
-  console.log("Updating switch focus setting " + document.querySelector("#switchFocus").checked)
-  // update local storage
-  browser.storage.local.set({
-    switchFocus : document.querySelector("#switchFocus").checked
-  })
+function restore() {
+  for (let property in defaults) {
+    browser.storage.local.get(property).then((r) => {
+      let value = defaults[property]
+      if (property in r) {
+        value = r[property]
+      }
+      document.querySelector("#" + property).checked = value
+    }, logError)
+  }
+}
+
+function set(field) {
+  let setting = {}
+  setting[field] = document.querySelector("#" + field).checked
+  browser.storage.local.set(setting)
 }
 
 document.addEventListener("DOMContentLoaded", restore)
-document.querySelector("#switchFocus").addEventListener("change", switchFocus)
+
+for (let property in defaults) {
+  document.querySelector("#" + property).addEventListener("change", () => {
+    set(property)
+  })
+}
+

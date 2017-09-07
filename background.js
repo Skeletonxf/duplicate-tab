@@ -1,5 +1,9 @@
 "use strict";
 
+function logError(e) {
+  console.log(`Error: ${e}`)
+}
+
 function duplicateActiveTab() {
   // get a Promise to retrieve the current tab
   var gettingActiveTab = browser.tabs.query({
@@ -15,10 +19,23 @@ function duplicateActiveTab() {
 }
 
 // duplicates the tab given
-function duplicate(tab) {
-  browser.tabs.duplicate(tab.id).then((tab) => {
-    // now change the focus to the new tab
-    browser.tabs.update(tab.id, {active: true})
+function duplicate(oldTab) {
+  browser.tabs.duplicate(oldTab.id).then((tab) => {
+    browser.storage.local.get("switchFocus").then((r) => {
+      // check if user disabled switching focus
+      let switchFocus = true
+      if ('switchFocus' in r) {
+        switchFocus = r.switchFocus
+      }
+      // older versions of Firefox didn't switch focus
+      // automatically when using duplicate
+      // newer ones do
+      if (switchFocus) {
+        browser.tabs.update(tab.id, {active: true})
+      } else {
+        browser.tabs.update(oldTab.id, {active: true})
+      }
+    })
   })
 }
 

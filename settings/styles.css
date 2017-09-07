@@ -1,0 +1,9 @@
+.setting {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+label {
+  font-size: 1.25rem;
+}

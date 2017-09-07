@@ -1,3 +1,5 @@
+"use strict";
+
 function duplicateActiveTab() {
   // get a Promise to retrieve the current tab
   var gettingActiveTab = browser.tabs.query({
@@ -25,18 +27,21 @@ browser.browserAction.onClicked.addListener(duplicate)
 
 let contextMenuId = "duplicate-menu"
 
-// add a right click Duplicate menu to tabs
-browser.contextMenus.create({
-  id: contextMenuId,
-  title: "Duplicate",
-  contexts: ["tab"]
-})
+// these will be undefined on android
+if (browser.contextMenus) {
+  // add a right click Duplicate menu to tabs
+  browser.contextMenus.create({
+    id: contextMenuId,
+    title: "Duplicate",
+    contexts: ["tab"]
+  })
 
-// listen to the context menu being clicked
-browser.contextMenus.onClicked.addListener(function(info, tab) {
-  switch (info.menuItemId) {
-    case contextMenuId:
-      duplicate(tab)
-      break;
-  }
-})
+  // listen to the context menu being clicked
+  browser.contextMenus.onClicked.addListener(function(info, tab) {
+    switch (info.menuItemId) {
+      case contextMenuId:
+        duplicate(tab)
+        break;
+    }
+  })
+}

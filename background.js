@@ -6,7 +6,8 @@ function logError(e) {
 
 let defaults = {
   switchFocus : true,
-  tabContext : true
+  tabContext : true,
+  keyboardShortcutEnabled : true
 }
 
 function duplicateActiveTab() {
@@ -74,7 +75,7 @@ function tabContextRun(info, tab) {
   }
 }
 
-// these will be undefined on android
+// will be undefined on android
 if (browser.contextMenus) {
   doIf("tabContext", () => {
     // add a right click Duplicate menu to tabs
@@ -96,4 +97,13 @@ if (browser.contextMenus) {
   })
 }
 
-
+// will be undefined on android
+if (browser.commands) {
+  browser.commands.onCommand.addListener((command) => {
+    if (command == "duplicate-shortcut") {
+      doIf("keyboardShortcutEnabled", () => {
+        duplicateActiveTab()
+      })
+    }
+  })
+}

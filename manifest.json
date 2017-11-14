@@ -23,5 +23,14 @@
 
   "options_ui": {
     "page": "/settings/settings.html"
+  },
+  
+  "commands": {
+    "duplicate-shortcut": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D"
+       },
+      "description": "Run duplicate on current tab from keyboard shortcut"
+    }
   }
 }

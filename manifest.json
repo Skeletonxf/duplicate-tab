@@ -3,7 +3,7 @@
   "homepage_url": "https://github.com/Skeletonxf/duplicate-tab/",
   "manifest_version": 2,
   "name": "Duplicate tab",
-  "version": "1.4",
+  "version": "1.5.1",
 
   "permissions": ["contextMenus", "storage"],
 
@@ -28,7 +28,8 @@
   "commands": {
     "duplicate-shortcut": {
       "suggested_key": {
-        "default": "Ctrl+Shift+D"
+        "default": "Ctrl+Shift+D",
+        "mac": "Alt+Shift+D"
        },
       "description": "Run duplicate on current tab from keyboard shortcut"
     }

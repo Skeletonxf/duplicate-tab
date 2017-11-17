@@ -6,7 +6,7 @@ function logError(e) {
 
 let defaults = {
   switchFocus : true,
-  tabContext : true,
+  tabContext : false,
   keyboardShortcutEnabled : true
 }
 

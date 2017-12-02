@@ -7,13 +7,14 @@ function logError(e) {
 let defaults = {
   switchFocus : true,
   tabContext : false,
-  keyboardShortcutEnabled : true
+  keyboardShortcut1Enabled : browser.runtime.PlatformOs !== "mac",
+  keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
 }
 
 function duplicateActiveTab() {
   // get a Promise to retrieve the current tab
   var gettingActiveTab = browser.tabs.query({
-    active: true, 
+    active: true,
     currentWindow: true
   })
 
@@ -45,7 +46,7 @@ function doIf(setting, action, ifNot) {
         ifNot()
       }
     }
-  })
+  }, logError)
 }
 
 // duplicates the tab given
@@ -70,8 +71,8 @@ let contextMenuId = "duplicate-menu"
 function tabContextRun(info, tab) {
   switch (info.menuItemId) {
     case contextMenuId:
-      duplicate(tab)
-      break;
+    duplicate(tab)
+    break;
   }
 }
 
@@ -97,11 +98,34 @@ if (browser.contextMenus) {
   })
 }
 
+// migrate old user settings
+browser.storage.local.get("keyboardShortcutEnabled").then((r) => {
+  if ("keyboardShortcutEnabled" in r) {
+    if (r.keyboardShortcutEnabled === true) {
+      browser.storage.local.set({
+        keyboardShortcut1Enabled : browser.runtime.PlatformOs !== "mac",
+        keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
+      })
+    } else if (r.keyboardShortcutEnabled === false) {
+      browser.storage.local.set({
+        keyboardShortcut2Enabled : false,
+        keyboardShortcut1Enabled : false
+      })
+    }
+    browser.storage.local.remove("keyboardShortcutEnabled")
+  }
+}, logError)
+
 // will be undefined on android
 if (browser.commands) {
   browser.commands.onCommand.addListener((command) => {
-    if (command == "duplicate-shortcut") {
-      doIf("keyboardShortcutEnabled", () => {
+    if (command === "duplicate-shortcut-1") {
+      doIf("keyboardShortcut1Enabled", () => {
+        duplicateActiveTab()
+      })
+    }
+    if (command === "duplicate-shortcut-2") {
+      doIf("keyboardShortcut2Enabled", () => {
         duplicateActiveTab()
       })
     }

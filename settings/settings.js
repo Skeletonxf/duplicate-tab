@@ -7,7 +7,8 @@ function logError(e) {
 let defaults = {
   switchFocus : true,
   tabContext : false,
-  keyboardShortcutEnabled : true
+  keyboardShortcut1Enabled : browser.runtime.PlatformOs != "mac",
+  keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
 }
 
 function restore() {

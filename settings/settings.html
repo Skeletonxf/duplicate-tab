@@ -14,14 +14,26 @@
     Firefox 57+ provides a duplicate tab context menu by default
     <div class = "setting">
       <input type = "checkbox" id = "tabContext">
-      <label for = "tabContext">Content menu on tabs (needs restart / reenable)</label>
+      <label for = "tabContext">
+        Content menu on tabs (needs restart / reenable)</label>
     </div>
 
     <div class = "setting">
-      <input type = "checkbox" id = "keyboardShortcutEnabled">
-      <label for = "keyboardShortcutEnabled">Duplicate tab on CTRL+SHIFT+D (OPTION/ALT+SHIFT+D on Mac)</label>
+      <input type = "checkbox" id = "keyboardShortcut1Enabled">
+      <label for = "keyboardShortcut1Enabled">
+        Duplicate tab on CTRL+SHIFT+D (default) (Command on mac)</label>
     </div>
-    
+
+    <div class = "setting">
+      <input type = "checkbox" id = "keyboardShortcut2Enabled">
+      <label for = "keyboardShortcut2Enabled">
+        Duplicate tab on ALT+SHIFT+D (mac default)</label>
+    </div>
+
+    <a href="https://github.com/Skeletonxf/duplicate-tab/issues/2">
+      Need a different shortcut?
+    </a>
+
     <script src = "/settings/settings.js"></script>
 
   </body>

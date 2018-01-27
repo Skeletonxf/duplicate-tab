@@ -8,7 +8,7 @@
   "permissions": ["contextMenus", "storage"],
 
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js", "/settings/defaults.js", "/core/util.js"]
   },
 
   "browser_action": {

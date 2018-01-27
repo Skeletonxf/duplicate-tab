@@ -1,16 +1,5 @@
 "use strict";
 
-function logError(e) {
-  console.log(`Error: ${e}`)
-}
-
-let defaults = {
-  switchFocus : true,
-  tabContext : false,
-  keyboardShortcut1Enabled : browser.runtime.PlatformOs !== "mac",
-  keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
-}
-
 function duplicateActiveTab() {
   // get a Promise to retrieve the current tab
   var gettingActiveTab = browser.tabs.query({
@@ -25,37 +14,13 @@ function duplicateActiveTab() {
   })
 }
 
-// runs the action function if the
-// setting is resolved to true, either
-// by the default being true or the
-// setting from the browser's local storage
-// being true, and runs the ifNot function
-// when not running the action function
-// if the ifNot function exists
-function doIf(setting, action, ifNot) {
-  browser.storage.local.get(setting).then((r) => {
-    // check user setting
-    let doAction = defaults[setting]
-    if (setting in r) {
-      doAction = r[setting]
-    }
-    if (doAction) {
-      action()
-    } else {
-      if (ifNot) {
-        ifNot()
-      }
-    }
-  }, logError)
-}
-
 // duplicates the tab given
 function duplicate(oldTab) {
   browser.tabs.duplicate(oldTab.id).then((tab) => {
     // older versions of Firefox didn't switch focus
     // automatically when using duplicate
     // newer ones do
-    doIf("switchFocus", () => {
+    doIf("switchFocus", defaults, () => {
       browser.tabs.update(tab.id, {active: true})
     }, () => {
       browser.tabs.update(oldTab.id, {active: true})
@@ -78,7 +43,7 @@ function tabContextRun(info, tab) {
 
 // will be undefined on android
 if (browser.contextMenus) {
-  doIf("tabContext", () => {
+  doIf("tabContext", defaults, () => {
     // add a right click Duplicate menu to tabs
     browser.contextMenus.create({
       id: contextMenuId,
@@ -120,12 +85,12 @@ browser.storage.local.get("keyboardShortcutEnabled").then((r) => {
 if (browser.commands) {
   browser.commands.onCommand.addListener((command) => {
     if (command === "duplicate-shortcut-1") {
-      doIf("keyboardShortcut1Enabled", () => {
+      doIf("keyboardShortcut1Enabled", defaults, () => {
         duplicateActiveTab()
       })
     }
     if (command === "duplicate-shortcut-2") {
-      doIf("keyboardShortcut2Enabled", () => {
+      doIf("keyboardShortcut2Enabled", defaults, () => {
         duplicateActiveTab()
       })
     }

@@ -21,22 +21,40 @@
     <div class = "setting">
       <input type = "checkbox" id = "keyboardShortcut1Enabled">
       <label for = "keyboardShortcut1Enabled">
-        Duplicate tab on CTRL+SHIFT+D (default) (Command on mac)</label>
+        Duplicate tab 1 enabled (default CTRL+SHIFT+D)</label>
     </div>
 
     <div class = "setting">
       <input type = "checkbox" id = "keyboardShortcut2Enabled">
       <label for = "keyboardShortcut2Enabled">
-        Duplicate tab on ALT+SHIFT+D (mac default)</label>
+        Duplicate tab 2 enabled (default ALT+SHIFT+D)</label>
+    </div>
+
+    <div class = "setting">
+      <input type = "checkbox" id = "keyboardShortcut3Enabled">
+      <label for = "keyboardShortcut3Enabled">
+        Duplicate tab 3 enabled (default CTRL+.)</label>
     </div>
 
     Not all shortcuts may work on all systems
-    <a href="https://github.com/Skeletonxf/duplicate-tab/issues/2">
-      Need a different shortcut?
+
+    From Firefox 60+ you can customise these shortcuts.
+    <h2><a href = "https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
+    Valid key combinations
+    </a></h2>
+    Some may still clash with default Firefox shortcuts.
+    Don't forget to enable the ones you want to use!
+
+    <div id="shortcuts">
+      <!-- Populated by lib script -->
+    </div>
+    <a href = "https://github.com/piroor/webextensions-lib-shortcut-customize-ui">
+    This customization UI is a seperate project
     </a>
+    <script src = "/lib/shortcut-customize-ui/ShortcutCustomizeUI.js"></script>
 
     <script src = "/core/util.js"></script>
-	<script src = "/settings/defaults.js"></script>
+    <script src = "/settings/defaults.js"></script>
     <script src = "/settings/settings.js"></script>
 
   </body>

@@ -63,24 +63,6 @@ if (browser.contextMenus) {
   })
 }
 
-// migrate old user settings
-browser.storage.local.get("keyboardShortcutEnabled").then((r) => {
-  if ("keyboardShortcutEnabled" in r) {
-    if (r.keyboardShortcutEnabled === true) {
-      browser.storage.local.set({
-        keyboardShortcut1Enabled : browser.runtime.PlatformOs !== "mac",
-        keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
-      })
-    } else if (r.keyboardShortcutEnabled === false) {
-      browser.storage.local.set({
-        keyboardShortcut2Enabled : false,
-        keyboardShortcut1Enabled : false
-      })
-    }
-    browser.storage.local.remove("keyboardShortcutEnabled")
-  }
-}, logError)
-
 // will be undefined on android
 if (browser.commands) {
   browser.commands.onCommand.addListener((command) => {
@@ -91,6 +73,11 @@ if (browser.commands) {
     }
     if (command === "duplicate-shortcut-2") {
       doIf("keyboardShortcut2Enabled", defaults, () => {
+        duplicateActiveTab()
+      })
+    }
+    if (command === "duplicate-shortcut-3") {
+      doIf("keyboardShortcut3Enabled", defaults, () => {
         duplicateActiveTab()
       })
     }

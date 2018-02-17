@@ -8,7 +8,7 @@
   "permissions": ["contextMenus", "storage"],
 
   "background": {
-    "scripts": ["background.js", "/settings/defaults.js", "/core/util.js"]
+    "scripts": ["/core/util.js", "/settings/defaults.js", "background.js"]
   },
 
   "browser_action": {
@@ -30,13 +30,19 @@
       "suggested_key": {
         "default": "Ctrl+Shift+D"
        },
-      "description": "Run duplicate on current tab from keyboard shortcut (1)"
+      "description": "Duplicate current tab 1"
     },
     "duplicate-shortcut-2": {
       "suggested_key": {
         "default": "Alt+Shift+D"
        },
-      "description": "Run duplicate on current tab from keyboard shortcut (2)"
+      "description": "Duplicate current tab 2"
+    },
+    "duplicate-shortcut-3": {
+      "suggested_key": {
+        "default": "Ctrl+D"
+       },
+      "description": "Duplicate current tab 3"
     }
   }
 }

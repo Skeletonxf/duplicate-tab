@@ -4,6 +4,8 @@
 let defaults = {
   switchFocus : true,
   tabContext : false,
-  keyboardShortcut1Enabled : browser.runtime.PlatformOs != "mac",
-  keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
+  keyboardShortcut1Enabled : browser.runtime.PlatformOs != "mac"
+    && browser.runtime.PlatformOs != "win",
+  keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac",
+  keyboardShortcut3Enabled : browser.runtime.PlatformOs === "win"
 }

@@ -9,3 +9,8 @@ for (let property in defaults) {
     syncLocalStorage(property)
   })
 }
+
+ShortcutCustomizeUI.build().then(list => {
+  // append the ui to the shortcuts div
+  document.getElementById('shortcuts').appendChild(list)
+})

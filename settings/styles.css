@@ -7,3 +7,11 @@
 label {
   font-size: 1.25rem;
 }
+
+#shortcuts ul li label.disabled {
+  text-decoration: line-through
+}
+
+#shortcuts ul li label {
+  text-decoration: none
+}

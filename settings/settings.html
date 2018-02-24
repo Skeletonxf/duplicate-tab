@@ -33,24 +33,27 @@
     <div class = "setting">
       <input type = "checkbox" id = "keyboardShortcut3Enabled">
       <label for = "keyboardShortcut3Enabled">
-        Duplicate tab 3 enabled (default CTRL+.)</label>
+        Duplicate tab 3 enabled (default unassigned)</label>
     </div>
 
-    Not all shortcuts may work on all systems
-
-    From Firefox 60+ you can customise these shortcuts.
-    <h2><a href = "https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
+    <h2>Firefox 60+ shortcut customization</h2>
+    
+    <h3>
+      <a href = "https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
     Valid key combinations
-    </a></h2>
-    Some may still clash with default Firefox shortcuts.
+      </a>
+    </h3>
+
+    Can still clash with default Firefox shortcuts.
     Don't forget to enable the ones you want to use!
+    <br>
 
     <div id="shortcuts">
       <!-- Populated by lib script -->
+      <!-- This customization UI is a seperate project -->
+      <!-- https://github.com/piroor/webextensions-lib-shortcut-customize-ui -->
     </div>
-    <a href = "https://github.com/piroor/webextensions-lib-shortcut-customize-ui">
-    This customization UI is a seperate project
-    </a>
+
     <script src = "/lib/shortcut-customize-ui/ShortcutCustomizeUI.js"></script>
 
     <script src = "/core/util.js"></script>

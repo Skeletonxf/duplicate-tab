@@ -39,9 +39,6 @@
       "description": "Duplicate current tab 2"
     },
     "duplicate-shortcut-3": {
-      "suggested_key": {
-        "default": "Ctrl+D"
-       },
       "description": "Duplicate current tab 3"
     }
   }

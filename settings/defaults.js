@@ -6,6 +6,7 @@ let defaults = {
   tabContext : false,
   keyboardShortcut1Enabled : browser.runtime.PlatformOs != "mac"
     && browser.runtime.PlatformOs != "win",
-  keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac",
-  keyboardShortcut3Enabled : browser.runtime.PlatformOs === "win"
+  keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
+    || browser.runtime.PlatformOs === "win",
+  keyboardShortcut3Enabled : false
 }

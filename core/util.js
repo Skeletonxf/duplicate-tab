@@ -1,6 +1,6 @@
 // Utility functions shared between webextensions
 // Currently shared between Duplicate Tab and Image Extract
-// If this grows significantly it may best move to a gitsubmodule
+// If this grows significantly it may best moved to a gitsubmodule
 
 function logError(e) {
   console.log(`Error: ${e}`)
@@ -38,7 +38,7 @@ function doIf(setting, defaults, action, ifNot) {
 
 /**
  * Syncs the page to the values of these properties
- * 
+ *
  * @param properties properties to update to
  * @returns nothing
  */

@@ -6,52 +6,57 @@
   </head>
   <body>
 
-    <div class = "setting">
+    <div class = "setting setting-group">
       <input type = "checkbox" id = "switchFocus">
       <label for = "switchFocus">Switch focus on duplicate</label>
     </div>
 
-    Firefox 57+ provides a duplicate tab context menu by default
-    <div class = "setting">
-      <input type = "checkbox" id = "tabContext">
-      <label for = "tabContext">
-        Content menu on tabs (needs restart / reenable)</label>
+    <div class = "setting-group">
+        <div class = "setting">
+          <input type = "checkbox" id = "tabContext">
+          <label for = "tabContext">
+            Content menu on tabs (needs restart / reenable)</label>
+        </div>
+        <img src = "/icons/duplicate-context-menu-screenshot.png"
+            class = "reference-image">
+        </img>
+        <p>Firefox 57+ provides a duplicate tab context menu by default</p>
     </div>
 
-    <div class = "setting">
-      <input type = "checkbox" id = "keyboardShortcut1Enabled">
-      <label for = "keyboardShortcut1Enabled">
-        Duplicate tab 1 enabled (default CTRL+SHIFT+D)</label>
-    </div>
+    <div class = "setting-group">
+      <h2>Firefox 60+ shortcut customization</h2>
 
-    <div class = "setting">
-      <input type = "checkbox" id = "keyboardShortcut2Enabled">
-      <label for = "keyboardShortcut2Enabled">
-        Duplicate tab 2 enabled (default ALT+SHIFT+D)</label>
-    </div>
+      <div class = "setting">
+        <input type = "checkbox" id = "keyboardShortcut1Enabled">
+        <label for = "keyboardShortcut1Enabled">
+          Duplicate tab 1 enabled (default CTRL+SHIFT+D)</label>
+      </div>
 
-    <div class = "setting">
-      <input type = "checkbox" id = "keyboardShortcut3Enabled">
-      <label for = "keyboardShortcut3Enabled">
-        Duplicate tab 3 enabled (default unassigned)</label>
-    </div>
+      <div class = "setting">
+        <input type = "checkbox" id = "keyboardShortcut2Enabled">
+        <label for = "keyboardShortcut2Enabled">
+          Duplicate tab 2 enabled (default ALT+SHIFT+D)</label>
+      </div>
 
-    <h2>Firefox 60+ shortcut customization</h2>
-    
-    <h3>
-      <a href = "https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
-    Valid key combinations
-      </a>
-    </h3>
+      <div class = "setting">
+        <input type = "checkbox" id = "keyboardShortcut3Enabled">
+        <label for = "keyboardShortcut3Enabled">
+          Duplicate tab 3 enabled (default unassigned)</label>
+      </div>
 
-    Can still clash with default Firefox shortcuts.
-    Don't forget to enable the ones you want to use!
-    <br>
+      <p>
+        <a href = "https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
+      Valid key combinations
+        </a>
+      </p>
 
-    <div id="shortcuts">
-      <!-- Populated by lib script -->
-      <!-- This customization UI is a seperate project -->
-      <!-- https://github.com/piroor/webextensions-lib-shortcut-customize-ui -->
+      <p>Can still clash with default Firefox shortcuts. Don't forget to enable the ones you want to use!</p>
+
+      <div id="shortcuts">
+        <!-- Populated by lib script -->
+        <!-- This customization UI is a seperate project -->
+        <!-- https://github.com/piroor/webextensions-lib-shortcut-customize-ui -->
+      </div>
     </div>
 
     <script src = "/lib/shortcut-customize-ui/ShortcutCustomizeUI.js"></script>

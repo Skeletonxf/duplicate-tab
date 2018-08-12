@@ -20,7 +20,7 @@ function duplicate(oldTab) {
     // older versions of Firefox didn't switch focus
     // automatically when using duplicate
     // newer ones do
-    doIf("switchFocus", defaults, () => {
+    doIf('switchFocus', defaults, () => {
       browser.tabs.update(tab.id, {active: true})
     }, () => {
       browser.tabs.update(oldTab.id, {active: true})
@@ -31,7 +31,7 @@ function duplicate(oldTab) {
 // listen for clicks on the icon to run the duplicate function
 browser.browserAction.onClicked.addListener(duplicate)
 
-let contextMenuId = "duplicate-menu"
+let contextMenuId = 'duplicate-menu'
 
 function tabContextRun(info, tab) {
   switch (info.menuItemId) {
@@ -47,8 +47,8 @@ if (browser.contextMenus) {
     // add a right click Duplicate menu to tabs
     browser.contextMenus.create({
       id: contextMenuId,
-      title: "Duplicate",
-      contexts: ["tab"]
+      title: 'Duplicate',
+      contexts: [ 'tab' ]
     })
     // listen to the context menu being clicked
     browser.contextMenus.onClicked.addListener(tabContextRun)
@@ -66,18 +66,18 @@ if (browser.contextMenus) {
 // will be undefined on android
 if (browser.commands) {
   browser.commands.onCommand.addListener((command) => {
-    if (command === "duplicate-shortcut-1") {
-      doIf("keyboardShortcut1Enabled", defaults, () => {
+    if (command === 'duplicate-shortcut-1') {
+      doIf('keyboardShortcut1Enabled', defaults, () => {
         duplicateActiveTab()
       })
     }
-    if (command === "duplicate-shortcut-2") {
-      doIf("keyboardShortcut2Enabled", defaults, () => {
+    if (command === 'duplicate-shortcut-2') {
+      doIf('keyboardShortcut2Enabled', defaults, () => {
         duplicateActiveTab()
       })
     }
-    if (command === "duplicate-shortcut-3") {
-      doIf("keyboardShortcut3Enabled", defaults, () => {
+    if (command === 'duplicate-shortcut-3') {
+      doIf('keyboardShortcut3Enabled', defaults, () => {
         duplicateActiveTab()
       })
     }

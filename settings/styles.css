@@ -4,8 +4,25 @@
   justify-content: flex-start;
 }
 
+.setting-group {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+  padding: 1em;
+  background-color: whitesmoke;
+  border-radius: 12px;
+}
+
 label {
   font-size: 1.25rem;
+}
+
+.setting-group p, .setting-group h2, .setting-group h3 {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+.reference-image {
+  max-height: 10em;
 }
 
 #shortcuts ul li label.disabled {

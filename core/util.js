@@ -6,6 +6,18 @@ function logError(e) {
   console.log(`Error: ${e}`)
 }
 
+class DevConsole {
+  constructor(isDebug) {
+    this.isDebug = isDebug
+  }
+  log(msg) {
+    if (this.isDebug) {
+      console.log(msg)
+    }
+  }
+}
+const devConsole = new DevConsole(false)
+
 /**
  * doIf executes the action if the setting
  * resolves to true, and executes the ifNot
@@ -37,6 +49,18 @@ function doIf(setting, defaults, action, ifNot) {
 }
 
 /**
+ * Sets a list of attributes onto an element.
+ * @param element element to set attributes on
+ * @param attributes list of objects where name field
+ *  is attribute name and value field is value of attribute to set.
+ */
+function setAttributes(element, attributes) {
+  attributes.forEach((attribute) => {
+    element.setAttribute(attribute.name, attribute.value)
+  })
+}
+
+/**
  * Syncs the page to the values of these properties
  *
  * @param properties properties to update to
@@ -64,4 +88,5 @@ function syncLocalStorage(property) {
   let setting = {}
   setting[property] = document.querySelector("#" + property).checked
   browser.storage.local.set(setting)
+  devConsole.log(setting)
 }

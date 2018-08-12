@@ -9,7 +9,8 @@ let shortcuts = {
   // TODO remove magic numbers
   keyboardShortcut1Enabled: 0,
   keyboardShortcut2Enabled: 4,
-  keyboardShortcut3Enabled: 8
+  keyboardShortcut3Enabled: 8,
+  advancedDuplicationShortcutEnabled: 12
 }
 
 document.addEventListener("DOMContentLoaded", () => {

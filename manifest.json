@@ -30,16 +30,22 @@
       "suggested_key": {
         "default": "Ctrl+Shift+D"
        },
-      "description": "Duplicate current tab 1"
+      "description": "Duplicate current tab - 1"
     },
     "duplicate-shortcut-2": {
       "suggested_key": {
         "default": "Alt+Shift+D"
        },
-      "description": "Duplicate current tab 2"
+      "description": "Duplicate current tab - 2"
     },
     "duplicate-shortcut-3": {
-      "description": "Duplicate current tab 3"
+      "description": "Duplicate current tab - 3"
+    },
+    "advanced-duplicate-shortcut-1": {
+      "suggested_key": {
+        "default": "Alt+Shift+A"
+       },
+      "description": "Advanced Duplication - 1"
     }
   }
 }

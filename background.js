@@ -1,6 +1,6 @@
 "use strict";
 
-function duplicateActiveTab() {
+function duplicateActiveTab(advanced) {
   // get a Promise to retrieve the current tab
   var gettingActiveTab = browser.tabs.query({
     active: true,
@@ -10,8 +10,13 @@ function duplicateActiveTab() {
   // get the activate tab to duplicate from the Promise
   gettingActiveTab.then((tabs) => {
     // get the first (only) tab in the array to duplicate
-    duplicate(tabs[0])
-  })
+    let tab = tabs[0]
+    if (advanced) {
+      advancedDuplicate(tab)
+    } else {
+      duplicate(tab)
+    }
+  }).catch(onError)
 }
 
 // duplicates the tab given
@@ -25,6 +30,19 @@ function duplicate(oldTab) {
     }, () => {
       browser.tabs.update(oldTab.id, {active: true})
     })
+  })
+}
+
+function advancedDuplicate(oldTab) {
+  browser.tabs.create({
+    url: '/page/page.html'
+  }).then((tab) => {
+    doIf('switchFocus', defaults, () => {
+      browser.tabs.update(tab.id, {active: true})
+    }, () => {
+      browser.tabs.update(oldTab.id, {active: true})
+    })
+    tab
   })
 }
 
@@ -68,17 +86,22 @@ if (browser.commands) {
   browser.commands.onCommand.addListener((command) => {
     if (command === 'duplicate-shortcut-1') {
       doIf('keyboardShortcut1Enabled', defaults, () => {
-        duplicateActiveTab()
+        duplicateActiveTab(false)
       })
     }
     if (command === 'duplicate-shortcut-2') {
       doIf('keyboardShortcut2Enabled', defaults, () => {
-        duplicateActiveTab()
+        duplicateActiveTab(false)
       })
     }
     if (command === 'duplicate-shortcut-3') {
       doIf('keyboardShortcut3Enabled', defaults, () => {
-        duplicateActiveTab()
+        duplicateActiveTab(false)
+      })
+    }
+    if (command === 'advanced-duplicate-shortcut-1') {
+      doIf('advancedDuplicationShortcutEnabled', defaults, () => {
+        duplicateActiveTab(true)
       })
     }
   })

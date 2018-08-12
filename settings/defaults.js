@@ -8,5 +8,6 @@ let defaults = {
     && browser.runtime.PlatformOs != "win",
   keyboardShortcut2Enabled : browser.runtime.PlatformOs === "mac"
     || browser.runtime.PlatformOs === "win",
-  keyboardShortcut3Enabled : false
+  keyboardShortcut3Enabled : false,
+  advancedDuplicationShortcutEnabled : false
 }

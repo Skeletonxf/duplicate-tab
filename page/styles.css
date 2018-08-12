@@ -1,0 +1,28 @@
+#grid {
+  padding: 1em;
+  background-color: whitesmoke;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+#grid div {
+  width: 40vw;
+  margin: auto;
+  height: 20vh;
+  border-radius: 24px;
+  padding: 12px;
+}
+
+#grid div:focus {
+  border: 3px solid black;
+}
+
+#normal {
+  background-color: yellow;
+}
+
+#private {
+  background-color: purple;
+}

@@ -37,13 +37,29 @@ function advancedDuplicate(oldTab) {
   browser.tabs.create({
     url: '/page/page.html'
   }).then((tab) => {
-    doIf('switchFocus', defaults, () => {
-      browser.tabs.update(tab.id, {active: true})
-    }, () => {
-      browser.tabs.update(oldTab.id, {active: true})
-    })
-    tab
-  })
+    // // do if runs ansync but doesn't need to happen
+    // // before doing the rest
+    // doIf('switchFocus', defaults, () => {
+    //   browser.tabs.update(tab.id, {active: true})
+    // }, () => {
+    //   browser.tabs.update(oldTab.id, {active: true})
+    // })
+    browser.tabs.executeScript(tab.id, {
+      file: '/page/script.js'
+    }).then(() => {
+      browser.runtime.onMessage.addListener(function listener(request) {
+        if (request.selected === 'normal') {
+          console.log('going to duplicate the tab')
+        }
+        if (request.selected === 'private') {
+          console.log('going to duplicate the tab in private window')
+        }
+        // close advanced duplication
+        browser.tabs.remove(tab.id)
+        browser.runtime.onMessage.removeListener(listener)
+      })
+    }).catch(logError)
+  }).catch(logError)
 }
 
 // listen for clicks on the icon to run the duplicate function

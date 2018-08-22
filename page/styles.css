@@ -10,19 +10,36 @@
 #grid div {
   width: 40vw;
   margin: auto;
-  height: 20vh;
+  height: 40vh;
+  max-height: 300px;
+  max-width: 500px;
   border-radius: 24px;
   padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid silver;
+}
+
+span {
+  vertical-align: middle;
+  text-align: center;
+  font-size: 3vw;
 }
 
 #grid div:focus {
-  border: 3px solid black;
+  border: 10px solid silver;
 }
 
 #normal {
-  background-color: yellow;
+  /* blank new tab page */
+  background-color: #F9F9FA;
+  color: black;
 }
 
 #private {
-  background-color: purple;
+  /* Firefox's private browsing colour */
+  background-color: #25003E;
+  color: white;
 }

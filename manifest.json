@@ -5,7 +5,7 @@
   "name": "Duplicate tab",
   "version": "1.7",
 
-  "permissions": ["contextMenus", "storage"],
+  "permissions": ["contextMenus", "storage", "activeTab"],
 
   "background": {
     "scripts": ["/core/util.js", "/settings/defaults.js", "background.js"]

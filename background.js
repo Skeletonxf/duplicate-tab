@@ -37,25 +37,62 @@ function advancedDuplicate(oldTab) {
   browser.tabs.create({
     url: '/page/page.html'
   }).then((tab) => {
-    // // do if runs ansync but doesn't need to happen
-    // // before doing the rest
-    // doIf('switchFocus', defaults, () => {
-    //   browser.tabs.update(tab.id, {active: true})
-    // }, () => {
-    //   browser.tabs.update(oldTab.id, {active: true})
-    // })
     browser.tabs.executeScript(tab.id, {
       file: '/page/script.js'
     }).then(() => {
+      browser.tabs.sendMessage(tab.id, {
+        url: oldTab.url
+      })
+      browser.tabs.onActivated.addListener(function switchTab() {
+        console.log('switched tab')
+        browser.tabs.onActivated.removeListener(switchTab)
+        // TODO: close advanced duplication page and clear listeners
+      })
       browser.runtime.onMessage.addListener(function listener(request) {
         if (request.selected === 'normal') {
-          console.log('going to duplicate the tab')
+          console.log('going to duplicate the tab in normal window')
+          // check for existing non incognito window
+          browser.windows.getCurrent().then((activeWindow) => {
+            if (activeWindow.incognito) {
+              // must create new tab from old tab's url
+              // as can't move tabs between the windows
+              // TODO: Use focused and configure with switchFocus setting
+              // once Firefox supports it
+              // TODO: Use existing normal window if exists?
+              browser.windows.create({
+                incognito: false,
+                url: [ oldTab.url ]
+              }).catch(logError)
+            } else {
+              // can duplicate the old tab
+              duplicate(oldTab)
+            }
+          }).catch(logError)
         }
         if (request.selected === 'private') {
           console.log('going to duplicate the tab in private window')
+          // check for existing incognito window
+          browser.windows.getCurrent().then((activeWindow) => {
+            if (activeWindow.incognito) {
+              // can duplicate the old tab
+              duplicate(oldTab)
+            } else {
+              // must create new tab from old tab's url
+              // as can't move tabs between the windows
+              // TODO: Use focused and configure with switchFocus setting
+              // once Firefox supports it
+              // TODO: Use existing incognito window if exists?
+              browser.windows.create({
+                incognito: true,
+                url: [ oldTab.url ]
+              }).catch(logError)
+            }
+          }).catch(logError)
         }
         // close advanced duplication
+        console.log('closing tab')
         browser.tabs.remove(tab.id)
+        console.log('removing listener')
         browser.runtime.onMessage.removeListener(listener)
       })
     }).catch(logError)

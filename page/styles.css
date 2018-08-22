@@ -20,6 +20,7 @@
   align-items: center;
   justify-content: center;
   border: 5px solid silver;
+  cursor: pointer;
 }
 
 span {
@@ -30,6 +31,7 @@ span {
 
 #grid div:focus {
   border: 10px solid silver;
+  box-shadow: 8px 8px 16px grey;
 }
 
 #normal {

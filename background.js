@@ -102,12 +102,22 @@ function advancedDuplicate(oldTab) {
 // listen for clicks on the icon to run the duplicate function
 browser.browserAction.onClicked.addListener(duplicate)
 
+// ids for context menus on tabs
 let contextMenuId = 'duplicate-menu'
+let contextMenuAdvancedId = 'duplicate-advanced-menu'
 
 function tabContextRun(info, tab) {
   switch (info.menuItemId) {
     case contextMenuId:
     duplicate(tab)
+    break;
+  }
+}
+
+function tabContextAdvancedRun(info, tab) {
+  switch (info.menuItemId) {
+    case contextMenuAdvancedId:
+    advancedDuplicate(tab)
     break;
   }
 }
@@ -131,6 +141,18 @@ if (browser.contextMenus) {
     // to immediately apply context settings
     browser.contextMenus.onClicked.removeListener(tabContextRun)
     browser.contextMenus.remove(contextMenuId)
+  })
+
+  doIf("tabContextAdvanced", defaults, () => {
+    browser.contextMenus.create({
+      id: contextMenuAdvancedId,
+      title: 'Advanced duplicate',
+      contexts: [ 'tab' ]
+    })
+    browser.contextMenus.onClicked.addListener(tabContextAdvancedRun)
+  }, () => {
+    browser.contextMenus.onClicked.removeListener(tabContextAdvancedRun)
+    browser.contextMenus.remove(contextMenuAdvancedId)
   })
 }
 

@@ -8,7 +8,12 @@
   "permissions": ["contextMenus", "storage", "activeTab"],
 
   "background": {
-    "scripts": ["/core/util.js", "/settings/defaults.js", "background.js"]
+    "scripts": [
+      "/core/util.js",
+      "/settings/defaults.js",
+      "background/duplication.js",
+      "background.js"
+    ]
   },
 
   "browser_action": {

@@ -1,7 +1,23 @@
+"use strict";
+
 // Utility functions shared between webextensions
 // Currently shared between Duplicate Tab and Image Extract
 // If this grows significantly it may best moved to a gitsubmodule
 
+/*
+ * A function that returns a function that logs an
+ * error it received and includes the custom message
+ * given to this function to identify the line where
+ * the error occured.
+ * @param msg The uniquely identifying message
+ */
+function expect(msg) {
+  return (error) => console.log(`Error: ${error}, at: ${msg}`)
+}
+
+/*
+ * deprecated
+ */
 function logError(e) {
   console.log(`Error: ${e}`)
 }

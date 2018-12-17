@@ -1,6 +1,20 @@
+"use strict";
+
+/*
+ * Dependencies
+ * core/util.js
+ */
 
 // duplicates the tab given
 function duplicate(oldTab) {
+  if (browser.tabs.duplicate === undefined) {
+    // browser.tabs.duplicate is listed as supported from FF Android 54
+    // but is not a function in FF Android 63????
+    browser.tabs.create({
+      url: oldTab.url
+    }).catch(expect('Failed to create new tab with URL as fallback'))
+    return
+  }
   browser.tabs.duplicate(oldTab.id).then((tab) => {
     // older versions of Firefox didn't switch focus
     // automatically when using duplicate
@@ -10,7 +24,7 @@ function duplicate(oldTab) {
     }, () => {
       browser.tabs.update(oldTab.id, {active: true})
     })
-  })
+  }).catch(expect('Failed to duplicate tab'))
 }
 
 // launches advanced duplication tab
@@ -45,7 +59,7 @@ function advancedDuplicate(oldTab) {
             browser.windows.create({
               incognito: false,
               url: [ oldTab.url ]
-            }).catch(logError)
+            }).catch(expect('Failed to create window from old URL'))
           } else {
             // can duplicate the old tab
             duplicate(oldTab)
@@ -67,7 +81,7 @@ function advancedDuplicate(oldTab) {
             browser.windows.create({
               incognito: true,
               url: [ oldTab.url ]
-            }).catch(logError)
+            }).catch(expect('Failed to create incognito window from old URL'))
           }
         }
         // close advanced duplication
@@ -76,6 +90,6 @@ function advancedDuplicate(oldTab) {
         console.log('removing listener')
         browser.runtime.onMessage.removeListener(listener)
       })
-    }).catch(logError)
-  }).catch(logError)
+    }).catch(expect('Failed to inject JS into WebExtension page'))
+  }).catch(expect('Failed to create WebExtension page'))
 }

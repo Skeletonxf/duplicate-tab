@@ -54,11 +54,36 @@ function advancedDuplicate(oldTab) {
             // as can't move tabs between the windows
             // TODO: Use focused and configure with switchFocus setting
             // once Firefox supports it
-            // TODO: Use existing normal window if exists?
-            browser.windows.create({
-              incognito: false,
-              url: [ oldTab.url ]
-            }).catch(expect('Failed to create window from old URL'))
+            browser.windows.getAll({
+              windowTypes: ['normal']
+            }).then((windows) => {
+              let normalWindows = windows.filter(w => !w.incognito)
+              if (normalWindows.length > 0) {
+                // use an existing private window
+                // assume that the windows are ordered by FF
+                // in some meaningful way, can't see any defined
+                // order on MDN so just use the first one.
+                // it is probably z order which is what we want.
+                browser.tabs.create({
+                  url: oldTab.url,
+                  active: true,
+                  windowId: normalWindows[0].id
+                }).then((_) => {
+                  // Focus the window we just created a tab for
+                  browser.windows.update(normalWindows[0].id, {
+                    focused: true
+                  }).catch('Failed to focus normal window')
+                }).catch(
+                  expect('Failed to create normal tab in existing window')
+                )
+              } else {
+                // need to create the incognito window
+                browser.windows.create({
+                  incognito: false,
+                  url: [ oldTab.url ]
+                }).catch(expect('Failed to create window from old URL'))
+              }
+            }).catch(expect("Failed to get the browser's windows"))
           } else {
             // can duplicate the old tab
             duplicate(oldTab)
@@ -76,11 +101,36 @@ function advancedDuplicate(oldTab) {
             // as can't move tabs between the windows
             // TODO: Use focused and configure with switchFocus setting
             // once Firefox supports it
-            // TODO: Use existing incognito window if exists?
-            browser.windows.create({
-              incognito: true,
-              url: [ oldTab.url ]
-            }).catch(expect('Failed to create incognito window from old URL'))
+            browser.windows.getAll({
+              windowTypes: ['normal']
+            }).then((windows) => {
+              let incognitoWindows = windows.filter(w => w.incognito)
+              if (incognitoWindows.length > 0) {
+                // use an existing private window
+                // assume that the windows are ordered by FF
+                // in some meaningful way, can't see any defined
+                // order on MDN so just use the first one.
+                // it is probably z order which is what we want.
+                browser.tabs.create({
+                  url: oldTab.url,
+                  active: true,
+                  windowId: incognitoWindows[0].id
+                }).then((_) => {
+                  // Focus the window we just created a tab for
+                  browser.windows.update(incognitoWindows[0].id, {
+                    focused: true
+                  }).catch('Failed to focus incognito window')
+                }).catch(
+                  expect('Failed to create incognito tab in existing window')
+                )
+              } else {
+                // need to create the incognito window
+                browser.windows.create({
+                  incognito: true,
+                  url: [ oldTab.url ]
+                }).catch(expect('Failed to create incognito window from old URL'))
+              }
+            }).catch(expect("Failed to get the browser's windows"))
           }
         }
         // close advanced duplication

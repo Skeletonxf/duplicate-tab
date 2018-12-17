@@ -1,5 +1,11 @@
 "use strict";
 
+/*
+ * Dependencies
+ * core/util.js
+ * settings/defaults.js
+ */
+
 let labels
 
 // TODO populate values from defaults somehow
@@ -14,14 +20,63 @@ let shortcuts = {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  syncPage(defaults)
-})
+
+syncPage(defaults)
+
+let backgroundPage = null
+
+{
+  let tabContext = document.querySelector('#tabContextLabel')
+  let tabContextAdvanced = document.querySelector('#tabContextAdvancedLabel')
+  browser.runtime.getBackgroundPage().then((background) => {
+    if (background === null) {
+      // We're in a private about:addons which means
+      // we can't access the background page
+      // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBackgroundPage
+      let warning = ' (Requires non private about:addons change or restart to take effect)'
+      tabContext.textContent += warning
+      tabContextAdvanced.textContent += warning
+      return
+    }
+    // save the background page for applying changes
+    backgroundPage = background
+  }).catch(expect('No background page?'))
+}
 
 for (let property in defaults) {
   document.querySelector("#" + property).addEventListener('change', () => {
     syncLocalStorage(property)
     if (property in shortcuts) {
       labels[shortcuts[property]].classList.toggle('disabled')
+    }
+    if (backgroundPage !== null) {
+      // If we have access to the background page then
+      // immediately apply the tab context menu settings
+      // when the user changes them
+      if (property === 'tabContext') {
+        let checkbox = document.querySelector("#" + property)
+        if (checkbox.checked) {
+          if (backgroundPage.addTabContextMenu) {
+            backgroundPage.addTabContextMenu()
+          }
+        } else {
+          if (backgroundPage.removeTabContextMenu) {
+            backgroundPage.removeTabContextMenu()
+          }
+        }
+      }
+      if (property === 'tabContextAdvanced') {
+        let checkbox = document.querySelector("#" + property)
+        if (checkbox.checked) {
+          if (backgroundPage.addTabContextAdvancedMenu) {
+            backgroundPage.addTabContextAdvancedMenu()
+          }
+        } else {
+          if (backgroundPage.removeTabContextAdvancedMenu) {
+            backgroundPage.removeTabContextAdvancedMenu()
+          }
+        }
+      }
     }
   })
 }
@@ -40,4 +95,6 @@ ShortcutCustomizeUI.build().then(list => {
       labels[i].classList.add('disabled')
     })
   }
+}).catch(expect('Failed to build ShortcutCustomizeUI lib'))
+
 })

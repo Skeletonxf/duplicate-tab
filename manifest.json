@@ -7,6 +7,12 @@
 
   "permissions": ["contextMenus", "storage", "activeTab"],
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "duplicateTab@skeletonxf.github.io"
+    }
+  },
+
   "background": {
     "scripts": [
       "/core/util.js",

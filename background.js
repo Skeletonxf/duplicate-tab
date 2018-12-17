@@ -1,5 +1,11 @@
 "use strict";
 
+/*
+ * Dependencies:
+ * core/util.js
+ * background/duplication.js
+ */
+
 function duplicateActiveTab(advanced) {
   // get a Promise to retrieve the current tab
   var gettingActiveTab = browser.tabs.query({
@@ -16,7 +22,7 @@ function duplicateActiveTab(advanced) {
     } else {
       duplicate(tab)
     }
-  }).catch(onError)
+  }).catch(expect("Couldn't get the active tab"))
 }
 
 // listen for clicks on the icon to run the duplicate function
@@ -42,9 +48,19 @@ function tabContextAdvancedRun(info, tab) {
   }
 }
 
+/*
+ * Use var to declare these functions so we can access them
+ * from settings.js when we query the background page so
+ * we can apply the changes to these settings immediately.
+ */
+var addTabContextMenu = null
+var removeTabContextMenu = null
+var addTabContextAdvancedMenu = null
+var removeTabContextAdvancedMenu = null
+
 // will be undefined on android
 if (browser.contextMenus) {
-  doIf("tabContext", defaults, () => {
+  addTabContextMenu = function() {
     // add a right click Duplicate menu to tabs
     browser.contextMenus.create({
       id: contextMenuId,
@@ -53,27 +69,33 @@ if (browser.contextMenus) {
     })
     // listen to the context menu being clicked
     browser.contextMenus.onClicked.addListener(tabContextRun)
-  }, () => {
+  }
+
+  removeTabContextMenu = function() {
     // remove this context menu
     // will do nothing if the menu didn't exist
-    // once Firefox supports ES6 modules move this
-    // code into module so settings.js can call it
-    // to immediately apply context settings
     browser.contextMenus.onClicked.removeListener(tabContextRun)
     browser.contextMenus.remove(contextMenuId)
-  })
+  }
 
-  doIf("tabContextAdvanced", defaults, () => {
+  doIf("tabContext", defaults, addTabContextMenu, removeTabContextMenu)
+
+  addTabContextAdvancedMenu = function() {
     browser.contextMenus.create({
       id: contextMenuAdvancedId,
       title: 'Advanced duplicate',
       contexts: [ 'tab' ]
     })
     browser.contextMenus.onClicked.addListener(tabContextAdvancedRun)
-  }, () => {
+  }
+
+  removeTabContextAdvancedMenu = function() {
     browser.contextMenus.onClicked.removeListener(tabContextAdvancedRun)
     browser.contextMenus.remove(contextMenuAdvancedId)
-  })
+  }
+
+  doIf("tabContextAdvanced", defaults,
+    addTabContextAdvancedMenu, removeTabContextAdvancedMenu)
 }
 
 // will be undefined on android

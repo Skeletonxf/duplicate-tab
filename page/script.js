@@ -57,8 +57,29 @@ normalTab.addEventListener('click', () => {
     selected: 'normal'
   })
 })
+normalTab.addEventListener('keypress', (event) => {
+  if (normalTab === document.activeElement) {
+    var key = event.which || event.keyCode;
+    if (key === 13) { // 13 is enter
+      browser.runtime.sendMessage({
+        selected: 'normal'
+      })
+    }
+  }
+})
+
 privateTab.addEventListener('click', () => {
   browser.runtime.sendMessage({
     selected: 'private'
   })
+})
+privateTab.addEventListener('keypress', (event) => {
+  if (privateTab === document.activeElement) {
+    var key = event.which || event.keyCode;
+    if (key === 13) { // 13 is enter
+      browser.runtime.sendMessage({
+        selected: 'private'
+      })
+    }
+  }
 })

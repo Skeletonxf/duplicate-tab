@@ -37,7 +37,6 @@ function duplicate(oldTab) {
 
 // launches advanced duplication tab
 function advancedDuplicate(oldTab) {
-  console.log('checking for old tab url field' + oldTab.url)
   browser.tabs.create({
     url: '/page/page.html',
     active: true,
@@ -54,9 +53,7 @@ function advancedDuplicate(oldTab) {
       })
       function listener(request) {
         if (request.selected === 'normal') {
-          console.log('going to duplicate the tab in normal window')
           // check for existing non incognito tab
-          console.log('am i already incognito' + oldTab.incognito)
           if (oldTab.incognito) {
             // must create new tab from old tab's url
             // as can't move tabs between the windows
@@ -98,9 +95,7 @@ function advancedDuplicate(oldTab) {
           }
         }
         if (request.selected === 'private') {
-          console.log('going to duplicate the tab in private window')
           // check for existing incognito tab
-          console.log('am i already incognito' + oldTab.incognito)
           if (oldTab.incognito) {
             // can duplicate the old tab
             duplicate(oldTab)
@@ -142,14 +137,11 @@ function advancedDuplicate(oldTab) {
           }
         }
         // close advanced duplication
-        console.log('closing tab')
         browser.tabs.remove(tab.id)
-        console.log('removing listener')
         browser.runtime.onMessage.removeListener(listener)
       }
       // Close the page automatically if the user tabs out of it
       browser.tabs.onActivated.addListener(function switchTab() {
-        console.log('switched tab')
         browser.tabs.onActivated.removeListener(switchTab)
         browser.runtime.onMessage.removeListener(listener)
         browser.tabs.remove(tab.id)

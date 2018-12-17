@@ -10,9 +10,17 @@ function duplicate(oldTab) {
   if (browser.tabs.duplicate === undefined) {
     // browser.tabs.duplicate is listed as supported from FF Android 54
     // but is not a function in FF Android 63????
-    browser.tabs.create({
-      url: oldTab.url
-    }).catch(expect('Failed to create new tab with URL as fallback'))
+    doIf('switchFocus', defaults, () => {
+      browser.tabs.create({
+        url: oldTab.url,
+        active: true
+      }).catch(expect('Failed to create new active tab with URL as fallback'))
+    }, () => {
+      browser.tabs.create({
+        url: oldTab.url,
+        active: false
+      }).catch(expect('Failed to create new tab with URL as fallback'))
+    })
     return
   }
   browser.tabs.duplicate(oldTab.id).then((tab) => {

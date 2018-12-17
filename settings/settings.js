@@ -81,6 +81,31 @@ for (let property in defaults) {
   })
 }
 
+{
+  // Disable settings that don't work on Android
+
+  function disable(setting) {
+    setting.style.opacity = 0.5
+    setting.style.pointerEvents = 'none'
+    let text = document.createElement('strong')
+    text.textContent = 'Unsupported on your browser'
+    text.style.fontSize = 'large'
+    text.style.color = 'darkred'
+    setting.prepend(text)
+  }
+
+  if (browser.contextMenus === undefined) {
+    // will be undefined on android
+    disable(document.querySelector('#tabContextSettings'))
+  }
+
+  if (browser.commands === undefined) {
+    // will be undefined on android
+    disable(document.querySelector('#commandSettings'))
+  }
+}
+
+
 ShortcutCustomizeUI.build().then(list => {
   // append the ui to the shortcuts div
   document.getElementById('shortcuts').appendChild(list)

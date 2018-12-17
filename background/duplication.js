@@ -31,21 +31,20 @@ function duplicate(oldTab) {
 function advancedDuplicate(oldTab) {
   console.log('checking for old tab url field' + oldTab.url)
   browser.tabs.create({
-    url: '/page/page.html'
+    url: '/page/page.html',
+    active: true,
+    // Place the duplicate WebExtension page just after the tab
+    index: oldTab.index + 1
   }).then((tab) => {
     browser.tabs.executeScript(tab.id, {
       file: '/page/script.js'
     }).then(() => {
+      // Give the WebExtension page the old tab's URL
       browser.tabs.sendMessage(tab.id, {
         url: oldTab.url,
         incognito: oldTab.incognito
       })
-      browser.tabs.onActivated.addListener(function switchTab() {
-        console.log('switched tab')
-        browser.tabs.onActivated.removeListener(switchTab)
-        // TODO: close advanced duplication page and clear listeners
-      })
-      browser.runtime.onMessage.addListener(function listener(request) {
+      function listener(request) {
         if (request.selected === 'normal') {
           console.log('going to duplicate the tab in normal window')
           // check for existing non incognito tab
@@ -89,7 +88,16 @@ function advancedDuplicate(oldTab) {
         browser.tabs.remove(tab.id)
         console.log('removing listener')
         browser.runtime.onMessage.removeListener(listener)
+      }
+      // Close the page automatically if the user tabs out of it
+      browser.tabs.onActivated.addListener(function switchTab() {
+        console.log('switched tab')
+        browser.tabs.onActivated.removeListener(switchTab)
+        browser.runtime.onMessage.removeListener(listener)
+        browser.tabs.remove(tab.id)
       })
+      // Listen to the WebExtension page for a button click
+      browser.runtime.onMessage.addListener(listener)
     }).catch(expect('Failed to inject JS into WebExtension page'))
   }).catch(expect('Failed to create WebExtension page'))
 }

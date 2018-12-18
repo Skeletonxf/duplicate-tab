@@ -14,6 +14,7 @@ browser.runtime.onMessage.addListener(function urlListener(request) {
         privileged = url.includes('about:debugging')
             || url.includes('about:addons')
             || url.includes('about:config')
+            || url.includes('about:newtab')
       }
       if (privileged) {
         // can't create privileged tabs so transfering between windows

@@ -175,3 +175,24 @@ if (browser.commands) {
     })
   }).catch(expect('getting settings'))
 }
+
+{
+  // patch for migration not keeping enabled shortcut when swapping over
+  browser.storage.local.get("hotfix").then((settings) => {
+    if (settings.hotfix) {
+      // don't fix multiple times
+      return
+    }
+    // migrations don't seem to always work due to the effects of
+    // 'enabled' being enabled by default OR enabled by local storage
+    // setting so just enable both shortcuts as even if they are
+    // the same shortcut DT won't duplicate twice
+    browser.storage.local.set({
+      'keyboardShortcut1Enabled': true,
+      'keyboardShortcut2Enabled': true
+    })
+    browser.storage.local.set({
+      hotfix: true
+    })
+  }).catch(expect('hotfix'))
+}

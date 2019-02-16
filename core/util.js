@@ -4,6 +4,20 @@
 // Currently shared between Duplicate Tab and Image Extract
 // If this grows significantly it may best moved to a gitsubmodule
 
+class DevConsole {
+  constructor(isDebug) {
+    this.isDebug = isDebug
+  }
+
+  log(msg) {
+    if (this.isDebug) {
+      console.log(msg)
+    }
+  }
+}
+
+const devConsole = new DevConsole(false)
+
 /*
  * A function that returns a function that logs an
  * error it received and includes the custom message
@@ -12,27 +26,8 @@
  * @param msg The uniquely identifying message
  */
 function expect(msg) {
-  return (error) => console.log(`Error: ${error}, at: ${msg}`)
+  return (error) => devConsole.log(`Error: ${error}, at: ${msg}`)
 }
-
-/*
- * deprecated
- */
-function logError(e) {
-  console.log(`Error: ${e}`)
-}
-
-class DevConsole {
-  constructor(isDebug) {
-    this.isDebug = isDebug
-  }
-  log(msg) {
-    if (this.isDebug) {
-      console.log(msg)
-    }
-  }
-}
-const devConsole = new DevConsole(false)
 
 /**
  * doIf executes the action if the setting
@@ -61,7 +56,7 @@ function doIf(setting, defaults, action, ifNot) {
         ifNot()
       }
     }
-  }, logError)
+  }, expect("doIf"))
 }
 
 /**
@@ -90,7 +85,7 @@ function syncPage(properties) {
         value = r[property]
       }
       document.querySelector("#" + property).checked = value
-    }, logError)
+    }, expect("syncPage"))
   }
 }
 

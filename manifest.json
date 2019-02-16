@@ -33,14 +33,11 @@
   "commands": {
     "duplicate-shortcut-1": {
       "suggested_key": {
-        "default": "Ctrl+Shift+D"
+        "default": "Alt+Shift+D"
        },
       "description": "Duplicate current tab - 1"
     },
     "duplicate-shortcut-2": {
-      "suggested_key": {
-        "default": "Alt+Shift+D"
-       },
       "description": "Duplicate current tab - 2"
     },
     "duplicate-shortcut-3": {

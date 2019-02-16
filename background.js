@@ -123,3 +123,55 @@ if (browser.commands) {
     }
   })
 }
+
+// Migration logic for v1.8 -> v1.9
+{
+  browser.storage.local.get([
+    'keyboardShortcut1Enabled',
+    'keyboardShortcut2Enabled',
+    'migrated'
+  ]).then((settings) => {
+    if (settings.migrated) {
+      // don't migrate multiple times
+      return
+    }
+    browser.commands.getAll().then((commands) => {
+      // Check if the default shortcuts of v1.8 are in use
+      // the 3rd shortcut never had a default so we don't need
+      // to do anything with it to migrate
+      let defaultShortcutsUsed = true;
+      for (let command of commands) {
+        if (defaultShortcutsUsed) {
+          if (command.name === 'duplicate-shortcut-1') {
+            defaultShortcutsUsed = command.shortcut == 'Ctrl+Shift+D'
+          }
+          if (command.name === 'duplicate-shortcut-2') {
+            defaultShortcutsUsed = command.shortcut == 'Alt+Shift+D'
+          }
+        }
+      }
+
+      if (defaultShortcutsUsed) {
+        // ALT+SHIFT+D is default shortcut now so should be shortcut-1
+        // v1.8 has Ctrl+Shift+D as shortcut 1 and Alt+Shift+D as shortcut 2
+        // so swap the shortcuts around
+        browser.commands.update({
+          name: 'duplicate-shortcut-1',
+          shortcut: 'Alt+Shift+D'
+        })
+        browser.commands.update({
+          name: 'duplicate-shortcut-2',
+          shortcut: 'Ctrl+Shift+D'
+        })
+        // we also need to swap the enabled/disabled settings around
+        browser.storage.local.set({
+          'keyboardShortcut1Enabled': settings['keyboardShortcut2Enabled'],
+          'keyboardShortcut2Enabled': settings['keyboardShortcut1Enabled']
+        })
+      }
+    }).catch(expect('getting commands'))
+    browser.storage.local.set({
+      migrated: true
+    })
+  }).catch(expect('getting settings'))
+}

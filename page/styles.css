@@ -1,47 +1,56 @@
 #grid {
-  padding: 1em;
-  background-color: whitesmoke;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+    padding: 1em;
+    background-color: whitesmoke;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 #grid div {
-  width: 40vw;
-  margin: auto;
-  height: 40vh;
-  max-height: 300px;
-  max-width: 500px;
-  border-radius: 24px;
-  padding: 12px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 5px solid silver;
-  cursor: pointer;
+    width: 40vw;
+    margin: auto;
+    height: 40vh;
+    max-height: 300px;
+    max-width: 500px;
+    border-radius: 24px;
+    padding: 12px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid silver;
+    cursor: pointer;
 }
 
 span {
-  vertical-align: middle;
-  text-align: center;
-  font-size: 3vw;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 3vw;
 }
 
 #grid div:focus {
-  border: 10px solid silver;
-  box-shadow: 8px 8px 16px grey;
+    border: 10px solid silver;
+    box-shadow: 8px 8px 16px grey;
 }
 
 #normal {
-  /* blank new tab page */
-  background-color: #F9F9FA;
-  color: black;
+    /* blank new tab page */
+    background-color: #F9F9FA;
+    color: black;
 }
 
 #private {
-  /* Firefox's private browsing colour */
-  background-color: #25003E;
-  color: white;
+    /* Firefox's private browsing colour */
+    background-color: #25003E;
+    color: white;
+}
+
+.highlight {
+    font-weight: bold;
+}
+
+.notice {
+    border-left: 5px solid #ffab00;
+    padding-left: 5px;
 }

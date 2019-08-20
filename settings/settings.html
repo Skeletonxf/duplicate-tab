@@ -1,76 +1,76 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset = "utf-8">
-    <link rel = "stylesheet" href = "/settings/styles.css">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/settings/styles.css">
   </head>
   <body>
 
-    <div class = "setting-group hidden" id="privateBrowsingPermission">
-        <div class = "notice">
-            <p class = "highlight">
+    <div class="setting-group hidden" id="privateBrowsingPermission">
+        <div class="notice">
+            <p class="highlight">
                 Duplicate Tab requires your permission to run in private windows
                 for additional functionality.
             </p>
         </div>
-        <img src = "/settings/private-permission.png"
-            class = "reference-image">
+        <img src="/settings/private-permission.png"
+            class="reference-image">
         </img>
     </div>
 
-    <div class = "setting setting-group">
-      <input type = "checkbox" id = "switchFocus">
-      <label for = "switchFocus">Switch focus on duplicate</label>
+    <div class="setting setting-group">
+      <input type="checkbox" id="switchFocus">
+      <label for="switchFocus">Switch focus on duplicate</label>
     </div>
 
-    <div class = "setting-group" id = "tabContextSettings">
-      <div class = "setting">
-        <input type = "checkbox" id = "tabContext">
-        <label for = "tabContext" id = "tabContextLabel">
+    <div class="setting-group" id="tabContextSettings">
+      <div class="setting">
+        <input type="checkbox" id="tabContext">
+        <label for="tabContext" id="tabContextLabel">
           Duplicate menu on tabs
         </label>
       </div>
-      <div class = "setting">
-        <input type = "checkbox" id = "tabContextAdvanced">
-        <label for = "tabContextAdvanced" id = "tabContextAdvancedLabel">
+      <div class="setting">
+        <input type="checkbox" id="tabContextAdvanced">
+        <label for="tabContextAdvanced" id="tabContextAdvancedLabel">
           Advanced duplicate menu on tabs
         </label>
       </div>
-      <img src = "/settings/duplicate-context-menu-screenshot.png"
-          class = "reference-image">
+      <img src="/settings/duplicate-context-menu-screenshot.png"
+          class="reference-image">
       </img>
       <p>Firefox 57+ provides a normal duplicate tab context menu by default</p>
     </div>
 
-    <div class = "setting-group" id = "commandSettings">
+    <div class="setting-group" id="commandSettings">
       <h2>Firefox 60+ shortcut customization</h2>
 
-      <div class = "setting">
-        <input type = "checkbox" id = "keyboardShortcut1Enabled">
-        <label for = "keyboardShortcut1Enabled">
+      <div class="setting">
+        <input type="checkbox" id="keyboardShortcut1Enabled">
+        <label for="keyboardShortcut1Enabled">
           Duplicate tab 1 enabled (default ALT+SHIFT+D)</label>
       </div>
 
-      <div class = "setting">
-        <input type = "checkbox" id = "keyboardShortcut2Enabled">
-        <label for = "keyboardShortcut2Enabled">
+      <div class="setting">
+        <input type="checkbox" id="keyboardShortcut2Enabled">
+        <label for="keyboardShortcut2Enabled">
           Duplicate tab 2 enabled</label>
       </div>
 
-      <div class = "setting">
-        <input type = "checkbox" id = "keyboardShortcut3Enabled">
-        <label for = "keyboardShortcut3Enabled">
+      <div class="setting">
+        <input type="checkbox" id="keyboardShortcut3Enabled">
+        <label for="keyboardShortcut3Enabled">
           Duplicate tab 3 enabled</label>
       </div>
 
-      <div class = "setting">
-        <input type = "checkbox" id = "advancedDuplicationShortcutEnabled">
-        <label for = "advancedDuplicationShortcutEnabled">
+      <div class="setting">
+        <input type="checkbox" id="advancedDuplicationShortcutEnabled">
+        <label for="advancedDuplicationShortcutEnabled">
           Advanced Duplication enabled (default ALT+SHIFT+A)
       </div>
 
       <p>
-        <a href = "https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
+        <a href="https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
       Valid key combinations
         </a>
       </p>
@@ -84,9 +84,9 @@
       </div>
     </div>
 
-    <script src = "/lib/shortcut-customize-ui/ShortcutCustomizeUI.js"></script>
+    <script src="/lib/shortcut-customize-ui/ShortcutCustomizeUI.js"></script>
 
-    <script type = "module" src = "/settings/_settings.js"></script>
+    <script type="module" src="/settings/settings.js"></script>
 
   </body>
 </html>

@@ -1,5 +1,5 @@
 import core from '/core/script.js'
-import defaults from '/settings/_defaults.js'
+import defaults from '/settings/defaults.js'
 
 // TODO populate values from defaults somehow
 let shortcuts = {

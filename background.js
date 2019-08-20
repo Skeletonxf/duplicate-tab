@@ -1,6 +1,6 @@
 import core from '/core/script.js'
-import duplication from '/background/_duplication.js'
-import defaults from '/settings/_defaults.js'
+import duplication from '/background/duplication.js'
+import defaults from '/settings/defaults.js'
 import ContextMenus from '/menus/script.js'
 
 console.log('Loaded main background script')

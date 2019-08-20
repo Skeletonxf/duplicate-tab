@@ -1,5 +1,5 @@
 import core from '/core/script.js'
-import defaults from '/settings/_defaults.js'
+import defaults from '/settings/defaults.js'
 
 function browserSupportsDuplicate() {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1515455

@@ -21,6 +21,7 @@
     justify-content: center;
     border: 5px solid silver;
     cursor: pointer;
+    position: relative;
 }
 
 span {
@@ -57,4 +58,26 @@ span {
 
 .hidden {
     display: none;
+}
+
+.shortcut {
+    position: absolute;
+    top: -0.5em;
+    left: -0.5em;
+    border: 1px solid black;
+    border-radius: 0.6em;
+    width: 1.2em;
+    height: 1.2em;
+
+}
+
+.dark-shortcut {
+    color: white;
+    background-color: black;
+}
+
+.white-shortcut {
+    color: black;
+    background-color: white;
+    border-color: white;
 }

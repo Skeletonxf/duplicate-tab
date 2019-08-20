@@ -97,8 +97,7 @@ normalTab.addEventListener('click', () => {
 })
 normalTab.addEventListener('keypress', (event) => {
     if (normalTab === document.activeElement) {
-        var key = event.which || event.keyCode;
-        if (key === 13) { // 13 is enter
+        if (event.key === 'Enter') {
             browser.runtime.sendMessage({
                 selected: 'normal'
             })
@@ -113,11 +112,24 @@ privateTab.addEventListener('click', () => {
 })
 privateTab.addEventListener('keypress', (event) => {
     if (privateTab === document.activeElement) {
-        var key = event.which || event.keyCode;
-        if (key === 13) { // 13 is enter
+        if (event.key === 'Enter') {
             browser.runtime.sendMessage({
                 selected: 'private'
             })
         }
+    }
+})
+
+// listen on the body to detect all shortcut keys regardless of focus
+document.body.addEventListener('keypress', (event) => {
+    if (event.key === 'n') {
+        browser.runtime.sendMessage({
+            selected: 'normal'
+        })
+    }
+    if (event.key === 'p') {
+        browser.runtime.sendMessage({
+            selected: 'private'
+        })
     }
 })

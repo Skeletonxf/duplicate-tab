@@ -9,13 +9,22 @@
   <body>
     <h1 id="header">Duplicate</h1>
     <div id="grid">
-      <div id="normal" tabindex="1" autofocus><span>Normal Tab</span></div>
-      <div id="private" tabindex="1"><span>Private Browsing Tab</span></div>
+      <div id="normal" tabindex="1" autofocus>
+          <span>Normal Tab</span>
+          <span class="shortcut dark-shortcut">N</span>
+      </div>
+      <div id="private" tabindex="1">
+          <span>Private Browsing Tab</span>
+          <span class="shortcut white-shortcut">P</span>
+      </div>
     </div>
     <p>Tab / Shift+Tab and Enter or click with your mouse</p>
     <p>This is still experimental, please report any bugs to <a href="https://github.com/Skeletonxf/duplicate-tab">GitHub</a></p>
     <div class="notice hidden" id="privateBrowsingPermission">
-        <p class="highlight">Duplicate Tab requires your permission to run in private windows for additional functionality.</p>
+        <p class="highlight">
+            Duplicate Tab requires your permission to run in
+            private windows for all functionality involving private browsing.
+        </p>
         <button id="openOptionsPage">Configure Addon</button>
     </div>
     <div class="notice hidden" id="privilegedTab">

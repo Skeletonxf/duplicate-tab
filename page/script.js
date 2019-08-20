@@ -46,18 +46,7 @@ browser.runtime.onMessage.addListener(function urlListener(request) {
                     privateTabButtonDeleter.run()
                 }
 
-                let noticeContainer = document.createElement('div')
-                noticeContainer.classList.add('notice')
-                document.body.appendChild(noticeContainer)
-                let h2 = document.createElement('h2')
-                h2.appendChild(
-                    document.createTextNode('Where did one of my buttons go?'))
-                noticeContainer.appendChild(h2)
-                let p = document.createElement('p')
-                p.appendChild(
-                    document.createTextNode(
-                        "Your tab has a privileged url that Duplicate Tab can't create."))
-                noticeContainer.appendChild(p)
+                document.querySelector('#privilegedTab').classList.remove('hidden')
             }
         }
 
@@ -75,15 +64,17 @@ browser.runtime.onMessage.addListener(function incognitoAccessListener(request) 
             // window
             privateTabButtonDeleter.run()
 
-            let noticeContainer = document.createElement('div')
-            noticeContainer.classList.add('notice')
-            document.body.appendChild(noticeContainer)
-            let p = document.createElement('p')
-            p.appendChild(
-                document.createTextNode(
-                    "Duplicate Tab requires your permission to run in private windows for additional functionality."))
-            p.classList.add('highlight')
-            noticeContainer.appendChild(p)
+            document.querySelector('#privateBrowsingPermission').classList.remove('hidden')
+
+            let launcher = document.querySelector('#openOptionsPage')
+            let port = browser.runtime.connect({
+                name: 'optionsPage'
+            })
+            launcher.addEventListener('click', () => {
+                port.postMessage({
+                    openOptionsPage: true
+                })
+            })
         }
 
         browser.runtime.onMessage.removeListener(incognitoAccessListener)

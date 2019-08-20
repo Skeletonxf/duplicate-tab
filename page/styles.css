@@ -54,3 +54,7 @@ span {
     border-left: 5px solid #ffab00;
     padding-left: 5px;
 }
+
+.hidden {
+    display: none;
+}

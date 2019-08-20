@@ -2,8 +2,8 @@
   "description": "Duplicates the current tab",
   "homepage_url": "https://github.com/Skeletonxf/duplicate-tab/",
   "manifest_version": 2,
-  "name": "Duplicate tab",
-  "version": "1.9.1",
+  "name": "Duplicate Tab",
+  "version": "2.0",
 
   "permissions": ["contextMenus", "storage", "activeTab"],
 
@@ -30,19 +30,19 @@
       "suggested_key": {
         "default": "Alt+Shift+D"
        },
-      "description": "Duplicate current tab - 1"
+      "description": "Duplicate current tab shortcut 1"
     },
     "duplicate-shortcut-2": {
-      "description": "Duplicate current tab - 2"
+      "description": "Duplicate current tab shortcut 2"
     },
     "duplicate-shortcut-3": {
-      "description": "Duplicate current tab - 3"
+      "description": "Duplicate current tab shortcut 3"
     },
     "advanced-duplicate-shortcut-1": {
       "suggested_key": {
         "default": "Alt+Shift+A"
        },
-      "description": "Advanced Duplication - 1"
+      "description": "Advanced Duplication shortcut"
     }
   }
 }

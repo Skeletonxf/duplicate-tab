@@ -6,6 +6,18 @@
   </head>
   <body>
 
+    <div class = "setting-group hidden" id="privateBrowsingPermission">
+        <div class = "notice">
+            <p class = "highlight">
+                Duplicate Tab requires your permission to run in private windows
+                for additional functionality.
+            </p>
+        </div>
+        <img src = "/settings/private-permission.png"
+            class = "reference-image">
+        </img>
+    </div>
+
     <div class = "setting setting-group">
       <input type = "checkbox" id = "switchFocus">
       <label for = "switchFocus">Switch focus on duplicate</label>
@@ -24,7 +36,7 @@
           Advanced duplicate menu on tabs
         </label>
       </div>
-      <img src = "/icons/duplicate-context-menu-screenshot.png"
+      <img src = "/settings/duplicate-context-menu-screenshot.png"
           class = "reference-image">
       </img>
       <p>Firefox 57+ provides a normal duplicate tab context menu by default</p>

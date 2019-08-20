@@ -51,8 +51,21 @@ browser.runtime.onConnect.addListener((port) => {
     if (port.name === 'contextMenus') {
         port.onMessage.addListener((msg) => {
             if (msg.refreshContextMenus) {
-                console.log('Refreshing context menus')
                 refreshContextMenus()
+            }
+        })
+    }
+})
+
+// Expose a way to open the options page from the content script when informing
+// user of settings that need modification
+browser.runtime.onConnect.addListener((port) => {
+    if (port.name === 'optionsPage') {
+        port.onMessage.addListener((msg) => {
+            if (msg.openOptionsPage) {
+                browser.runtime.openOptionsPage().then(() => {
+                    console.log('Opened options page')
+                }).catch(core.expect('Failed to open options page'))
             }
         })
     }

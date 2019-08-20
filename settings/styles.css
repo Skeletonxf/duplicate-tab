@@ -23,6 +23,7 @@ label {
 
 .reference-image {
   max-height: 10em;
+  max-width: 100%;
 }
 
 #shortcuts ul li label.disabled {
@@ -31,4 +32,17 @@ label {
 
 #shortcuts ul li label {
   text-decoration: none
+}
+
+.highlight {
+    font-weight: bold;
+}
+
+.notice {
+    border-left: 5px solid #ffab00;
+    padding-left: 5px;
+}
+
+.hidden {
+    display: none;
 }

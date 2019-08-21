@@ -1,4 +1,4 @@
-const IS_DEBUG = true
+const IS_DEBUG = false
 
 /*
  * A singleton utility class providing helper functions for Duplicate Tab

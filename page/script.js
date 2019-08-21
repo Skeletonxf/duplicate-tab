@@ -122,12 +122,12 @@ privateTab.addEventListener('keypress', (event) => {
 
 // listen on the body to detect all shortcut keys regardless of focus
 document.body.addEventListener('keypress', (event) => {
-    if (event.key === 'n') {
+    if (event.key === 'n' || event.key === '1') {
         browser.runtime.sendMessage({
             selected: 'normal'
         })
     }
-    if (event.key === 'p') {
+    if (event.key === 'p' || event.key === '2') {
         browser.runtime.sendMessage({
             selected: 'private'
         })

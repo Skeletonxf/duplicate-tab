@@ -3,8 +3,6 @@ import duplication from '/background/duplication.js'
 import defaults from '/settings/defaults.js'
 import ContextMenus from '/menus/script.js'
 
-console.log('Loaded main background script')
-
 /*
  * Function to determine the active tab to duplicate to then hand off to
  * duplication logic for that tab.
@@ -64,7 +62,6 @@ browser.runtime.onConnect.addListener((port) => {
         port.onMessage.addListener((msg) => {
             if (msg.openOptionsPage) {
                 browser.runtime.openOptionsPage().then(() => {
-                    console.log('Opened options page')
                 }).catch(core.expect('Failed to open options page'))
             }
         })

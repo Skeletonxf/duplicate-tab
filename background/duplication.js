@@ -192,6 +192,14 @@ class DuplicationLogic {
                         "Failed to get the browser's windows"))
                 }
             }
+            if (request.selected === 'window') {
+                // always create window of same type as old tab
+                browser.windows.create({
+                    incognito: !!oldTab.incognito,
+                    url: [ oldTab.url ]
+                }).catch(core.expect(
+                    'Failed to create new window from old URL'))
+            }
             // close advanced duplication
             tabDeleter.run()
             browser.runtime.onMessage.removeListener(listener)

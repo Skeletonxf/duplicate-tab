@@ -1,5 +1,18 @@
-let normalTab = document.getElementById('normal')
-let privateTab = document.getElementById('private')
+let buttons = new Map()
+buttons.set('normal', {
+    id: 'normal',
+    shortcuts: ['n', '1']
+})
+buttons.set('private', {
+    id: 'private',
+    shortcuts: ['p', '2']
+})
+buttons.set('window', {
+    id: 'window',
+    shortcuts: ['w', '3']
+})
+
+buttons.forEach((b) => b.element = document.getElementById(b.id))
 
 /*
  * A DOM element deleter that can only delete the target once even if called
@@ -19,8 +32,7 @@ class IdempotentElementDeleter {
     }
 }
 
-let normalTabButtonDeleter = new IdempotentElementDeleter(normalTab)
-let privateTabButtonDeleter = new IdempotentElementDeleter(privateTab)
+buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
 
 browser.runtime.onMessage.addListener(function urlListener(request) {
     if (request.url) {
@@ -41,16 +53,23 @@ browser.runtime.onMessage.addListener(function urlListener(request) {
                 // can't create privileged tabs so transfering between windows
                 // doesn't work, but can still duplicate them.
                 if (request.incognito) {
-                    normalTabButtonDeleter.run()
+                    buttons.get('normal').deleter.run()
                 } else {
-                    privateTabButtonDeleter.run()
+                    buttons.get('private').deleter.run()
                 }
+                buttons.get('window').deleter.run()
 
                 document.querySelector('#privilegedTab').classList.remove('hidden')
             }
         }
 
         browser.runtime.onMessage.removeListener(urlListener)
+
+        // also style new window button to type of window to create
+        if (request.incognito) {
+            buttons.get('window').element.classList.add('private-style')
+            buttons.get('window').element.classList.remove('normal-style')
+        }
     }
 })
 
@@ -62,7 +81,7 @@ browser.runtime.onMessage.addListener(function incognitoAccessListener(request) 
             // if incognito permissions are not given it is impossible
             // to launch the advanced duplication tab in a private
             // window
-            privateTabButtonDeleter.run()
+            buttons.get('private').deleter.run()
 
             document.querySelector('#privateBrowsingPermission').classList.remove('hidden')
 
@@ -81,55 +100,34 @@ browser.runtime.onMessage.addListener(function incognitoAccessListener(request) 
     }
 })
 
-normalTab.focus()
+buttons.get('normal').element.focus()
 
-normalTab.addEventListener('mouseenter', () => {
-    normalTab.focus()
-})
-privateTab.addEventListener('mouseenter', () => {
-    privateTab.focus()
-})
-
-normalTab.addEventListener('click', () => {
-    browser.runtime.sendMessage({
-        selected: 'normal'
+buttons.forEach((b) => {
+    b.element.addEventListener('mouseenter', () => {
+        b.element.focus()
     })
-})
-normalTab.addEventListener('keypress', (event) => {
-    if (normalTab === document.activeElement) {
-        if (event.key === 'Enter') {
+
+    b.element.addEventListener('click', () => {
+        browser.runtime.sendMessage({
+            selected: b.id
+        })
+    })
+
+    b.element.addEventListener('keypress', (event) => {
+        // only select with enter on the focused element
+        if (b.element === document.activeElement && event.key === 'Enter') {
             browser.runtime.sendMessage({
-                selected: 'normal'
+                selected: b.id
             })
         }
-    }
-})
-
-privateTab.addEventListener('click', () => {
-    browser.runtime.sendMessage({
-        selected: 'private'
     })
-})
-privateTab.addEventListener('keypress', (event) => {
-    if (privateTab === document.activeElement) {
-        if (event.key === 'Enter') {
+
+    // listen on the body to detect all shortcut keys regardless of focus
+    document.body.addEventListener('keypress', (event) => {
+        if (b.shortcuts.includes(event.key)) {
             browser.runtime.sendMessage({
-                selected: 'private'
+                selected: b.id
             })
         }
-    }
-})
-
-// listen on the body to detect all shortcut keys regardless of focus
-document.body.addEventListener('keypress', (event) => {
-    if (event.key === 'n' || event.key === '1') {
-        browser.runtime.sendMessage({
-            selected: 'normal'
-        })
-    }
-    if (event.key === 'p' || event.key === '2') {
-        browser.runtime.sendMessage({
-            selected: 'private'
-        })
-    }
+    })
 })

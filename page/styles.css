@@ -46,7 +46,7 @@ span {
     color: white;
 }
 
-.button-description::first-letter {
+.button-shortcut {
     text-decoration: underline;
 }
 
@@ -80,6 +80,27 @@ span {
 }
 
 .white-shortcut {
+    color: black;
+    background-color: white;
+    border-color: white;
+}
+
+.normal-style {
+    background-color: #F9F9FA;
+    color: black;
+}
+
+.normal-style .window-shortcut {
+    color: white;
+    background-color: black;
+}
+
+.private-style {
+    background-color: #25003E;
+    color: white;
+}
+
+.private-style .window-shortcut {
     color: black;
     background-color: white;
     border-color: white;

@@ -57,26 +57,25 @@ class Core {
                 }
             }
         }
-    }
-
-    /*
-     * Simple logging utility that is turned off on release
-     */
-    log = (msg) => {
-        if (this.isDebug) {
-            console.log(msg)
+        /*
+         * Simple logging utility that is turned off on release
+         */
+        this.log = (msg) => {
+            if (this.isDebug) {
+                console.log(msg)
+            }
         }
-    }
 
-    /*
-     * A function that returns a function that logs an
-     * error it received and includes the custom message
-     * given to this function to identify the line where
-     * the error occured.
-     * @param msg The uniquely identifying message
-     */
-    expect = (msg) => {
-        return (error) => this.log(`Error: ${error}, at: ${msg}`)
+        /*
+         * A function that returns a function that logs an
+         * error it received and includes the custom message
+         * given to this function to identify the line where
+         * the error occured.
+         * @param msg The uniquely identifying message
+         */
+        this.expect = (msg) => {
+            return (error) => this.log(`Error: ${error}, at: ${msg}`)
+        }
     }
 }
 

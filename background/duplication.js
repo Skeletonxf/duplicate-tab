@@ -31,7 +31,7 @@ class DuplicationLogic {
             if (!browserSupportsDuplicate()) {
                 // duplicate by creating new tab with same URL
                 // we set the active field depending on the switch focus setting
-                doIf('switchFocus', defaults, () => {
+                core.settings.doIf('switchFocus', defaults, () => {
                     browser.tabs.create({
                         url: oldTab.url,
                         active: true

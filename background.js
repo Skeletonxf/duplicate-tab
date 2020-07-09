@@ -72,24 +72,16 @@ browser.runtime.onConnect.addListener((port) => {
 if (browser.commands) {
     browser.commands.onCommand.addListener((command) => {
         if (command === 'duplicate-shortcut-1') {
-            core.settings.doIf('keyboardShortcut1Enabled', defaults, () => {
-                duplicateActiveTab(false)
-            })
+            duplicateActiveTab(false)
         }
         if (command === 'duplicate-shortcut-2') {
-            core.settings.doIf('keyboardShortcut2Enabled', defaults, () => {
-                duplicateActiveTab(false)
-            })
+            duplicateActiveTab(false)
         }
         if (command === 'duplicate-shortcut-3') {
-            core.settings.doIf('keyboardShortcut3Enabled', defaults, () => {
-                duplicateActiveTab(false)
-            })
+            duplicateActiveTab(false)
         }
         if (command === 'advanced-duplicate-shortcut-1') {
-            core.settings.doIf('advancedDuplicationShortcutEnabled', defaults, () => {
-                duplicateActiveTab(true)
-            })
+            duplicateActiveTab(true)
         }
     })
 }

@@ -39,52 +39,31 @@
       <img src="/settings/duplicate-context-menu-screenshot.png"
           class="reference-image">
       </img>
-      <p>Firefox 57+ provides a normal duplicate tab context menu by default</p>
+      <p>Firefox provides a normal duplicate tab context menu by default</p>
+    </div>
+
+    <div class="setting setting-group setting-columns">
+      <div>
+        <input type="radio" id="duplicateLocationBrowser" name="duplicateLocation" value="browser" checked>
+        <label for="duplicateLocationBrowser">Default - Place duplicated tabs according to Firefox's settings</label>
+      </div>
+      <div>
+        <input type="radio" id="duplicateLocationRight" name="duplicateLocation" value="right">
+        <label for="duplicateLocationRight">Place duplicated tabs at the end of the tab list</label>
+      </div>
+      <div>
+        <input type="radio" id="duplicateLocationAfterCurrent" name="duplicateLocation" value="afterCurrent">
+        <label for="duplicateLocationAfterCurrent">Place duplicated tabs directly after the original</label>
+      </div>
     </div>
 
     <div class="setting-group" id="commandSettings">
-      <h2>Firefox 60+ shortcut customization</h2>
-
-      <div class="setting">
-        <input type="checkbox" id="keyboardShortcut1Enabled">
-        <label for="keyboardShortcut1Enabled">
-          Duplicate tab 1 enabled (default ALT+SHIFT+D)</label>
-      </div>
-
-      <div class="setting">
-        <input type="checkbox" id="keyboardShortcut2Enabled">
-        <label for="keyboardShortcut2Enabled">
-          Duplicate tab 2 enabled</label>
-      </div>
-
-      <div class="setting">
-        <input type="checkbox" id="keyboardShortcut3Enabled">
-        <label for="keyboardShortcut3Enabled">
-          Duplicate tab 3 enabled</label>
-      </div>
-
-      <div class="setting">
-        <input type="checkbox" id="advancedDuplicationShortcutEnabled">
-        <label for="advancedDuplicationShortcutEnabled">
-          Advanced Duplication enabled (default ALT+SHIFT+A)
-      </div>
-
-      <p>
-        <a href="https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">
-      Valid key combinations
-        </a>
-      </p>
-
-      <p>Can still clash with default Firefox shortcuts. Don't forget to enable the ones you want to use!</p>
-
-      <div id="shortcuts">
-        <!-- Populated by lib script -->
-        <!-- This customization UI is a seperate project -->
-        <!-- https://github.com/piroor/webextensions-lib-shortcut-customize-ui -->
-      </div>
+      <h2>Firefox shortcut customization</h2>
+      <img src="/settings/shortcut-screenshot.png"
+          class="reference-image large">
+      </img>
     </div>
 
-    <script src="/lib/shortcut-customize-ui/ShortcutCustomizeUI.js"></script>
     <script type="module" src="/settings/settings.js"></script>
   </body>
 </html>

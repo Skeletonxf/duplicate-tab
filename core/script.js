@@ -45,8 +45,11 @@ class Core {
              * Syncs the property checkboxes on the webpage to the default values
              * of these properties from local storage or their default value.
              */
-            syncPage: (properties) => {
+            syncPage: (properties, ignoreList) => {
                 for (let property in properties) {
+                    if (ignoreList.includes(property)) {
+                        continue
+                    }
                     browser.storage.local.get(property).then((result) => {
                         let value = properties[property]
                         if (property in result) {

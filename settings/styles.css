@@ -21,17 +21,17 @@ label {
   margin-bottom: 0.3em;
 }
 
+.setting-columns {
+  flex-direction: column;
+}
+
 .reference-image {
   max-height: 10em;
   max-width: 100%;
 }
 
-#shortcuts ul li label.disabled {
-  text-decoration: line-through
-}
-
-#shortcuts ul li label {
-  text-decoration: none
+.reference-image.large {
+    max-height: 14em;
 }
 
 .highlight {

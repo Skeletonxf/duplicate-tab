@@ -1,17 +1,6 @@
 import core from '/core/script.js'
 import defaults from '/settings/defaults.js'
 
-// TODO populate values from defaults somehow
-let shortcuts = {
-  // values refer to the ith labels in the table corresponding
-  // to the shortcut description
-  // TODO remove magic numbers
-  keyboardShortcut1Enabled: 0,
-  keyboardShortcut2Enabled: 4,
-  keyboardShortcut3Enabled: 8,
-  advancedDuplicationShortcutEnabled: 12
-}
-
 let labels
 
 let port = browser.runtime.connect({
@@ -19,9 +8,44 @@ let port = browser.runtime.connect({
 })
 
 document.addEventListener("DOMContentLoaded", () => {
-    core.settings.syncPage(defaults)
+    // apply boolean settings to page
+    core.settings.syncPage(defaults, ['duplicateLocation'])
+
+    // handle duplicate location setting explicitly
+    let browserDefault = document.querySelector('#duplicateLocationBrowser')
+    let right = document.querySelector('#duplicateLocationRight')
+    let afterCurrent = document.querySelector('#duplicateLocationAfterCurrent')
+
+    browser.storage.local.get('duplicateLocation').then((result) => {
+        let setting = defaults['duplicateLocation']
+        if ('duplicateLocation' in result) {
+            setting = result.duplicateLocation
+        }
+        for (let radioButton of [browserDefault, right, afterCurrent]) {
+            if (setting === radioButton.value) {
+                radioButton.checked = true
+            }
+        }
+    })
 
     for (let property in defaults) {
+        // handle the duplicate location explicitly as it is a 3 way setting
+        if (property === 'duplicateLocation') {
+            let update = () => {
+                for (let radioButton of [browserDefault, right, afterCurrent]) {
+                    if (radioButton.checked) {
+                        browser.storage.local.set({
+                            duplicateLocation: radioButton.value
+                        })
+                    }
+                }
+            }
+            browserDefault.addEventListener('change', update)
+            right.addEventListener('change', update)
+            afterCurrent.addEventListener('change', update)
+            continue
+        }
+        // handle all boolean settings
         let toggle = document.querySelector("#" + property)
         toggle.addEventListener('change', () => {
             // Propagate the new state of this toggle to the local storage
@@ -29,10 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             setting[property] = toggle.checked
             browser.storage.local.set(setting)
 
-            if (property in shortcuts) {
-                labels[shortcuts[property]].classList.toggle('disabled')
-            }
-            if (property === "tabContext" || property === "tabContextAdvanced") {
+            if (property === 'tabContext' || property === 'tabContextAdvanced') {
                 port.postMessage({
                     refreshContextMenus: true
                 })
@@ -63,22 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
           disable(document.querySelector('#commandSettings'))
       }
     }
-
-    ShortcutCustomizeUI.build().then(list => {
-        // append the ui to the shortcuts div
-        document.getElementById('shortcuts').appendChild(list)
-        // get all of the customization labels added to page
-        labels = document.querySelectorAll('#shortcuts ul li label')
-        // now apply the enabled/disabled css to each
-        for (let shortcut in shortcuts) {
-            let i = shortcuts[shortcut]
-            core.settings.doIf(shortcut, defaults, () => {
-                // do nothing as enabled
-            }, () => {
-                labels[i].classList.add('disabled')
-            })
-        }
-    }).catch(core.expect('Failed to build ShortcutCustomizeUI lib'))
 
     browser.extension.isAllowedIncognitoAccess().then((isAllowed) => {
         if (!isAllowed) {

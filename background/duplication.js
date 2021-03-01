@@ -56,6 +56,7 @@ class DuplicationLogic {
                     duplicateLocation = results['duplicateLocation']
                 }
                 let duplicateProperties = {}
+                //console.log('duplicate location ', duplicateLocation)
                 duplicateProperties.active = switchFocus
                 // if the browser is set to send to end, and we are configured
                 // to place after current, we need to set this before duplicating
@@ -128,29 +129,33 @@ class DuplicationLogic {
                     if (oldTab.incognito) {
                         // must create new tab from old tab's url
                         // as can't move tabs between the windows
-                        // TODO: configure focused with switchFocus setting
-                        // once Firefox supports it
                         browser.windows.getAll({
                             windowTypes: ['normal']
                         }).then((windows) => {
                             let normalWindows = windows.filter(w => !w.incognito)
                             if (normalWindows.length > 0) {
-                                // use an existing private window
-                                // assume that the windows are ordered by FF
-                                // in some meaningful way, can't see any defined
-                                // order on MDN so just use the first one.
-                                // it is probably z order which is what we want.
-                                browser.tabs.create({
-                                    url: oldTab.url,
-                                    active: true,
-                                    windowId: normalWindows[0].id
-                                }).then((_) => {
-                                    // Focus the window we just created a tab for
-                                    browser.windows.update(normalWindows[0].id, {
-                                        focused: true
-                                    }).catch(core.expect('Failed to focus normal window'))
-                                }).catch(
-                                    core.expect('Failed to create normal tab in existing window'))
+                                browser.storage.local.get('switchFocus').then((results) => {
+                                    let switchFocus = defaults['switchFocus']
+                                    if ('switchFocus' in results) {
+                                        switchFocus = results['switchFocus']
+                                    }
+                                    // use an existing private window
+                                    // assume that the windows are ordered by FF
+                                    // in some meaningful way, can't see any defined
+                                    // order on MDN so just use the first one.
+                                    // it is probably z order which is what we want.
+                                    browser.tabs.create({
+                                        url: oldTab.url,
+                                        active: switchFocus,
+                                        windowId: normalWindows[0].id
+                                    }).then((_) => {
+                                        // Focus the window we just created a tab for
+                                        browser.windows.update(normalWindows[0].id, {
+                                            focused: true
+                                        }).catch(core.expect('Failed to focus normal window'))
+                                    }).catch(
+                                        core.expect('Failed to create normal tab in existing window'))
+                                }).catch(core.expect('Failed to get local storage settings'))
                             } else {
                                 // need to create the normal window
                                 browser.windows.create({
@@ -172,28 +177,32 @@ class DuplicationLogic {
                     } else {
                         // must create new tab from old tab's url
                         // as can't move tabs between the windows
-                        // TODO: Use focused and configure with switchFocus setting
-                        // once Firefox supports it
                         browser.windows.getAll({
                             windowTypes: ['normal']
                         }).then((windows) => {
                             let incognitoWindows = windows.filter(w => w.incognito)
                             if (incognitoWindows.length > 0) {
-                                // use an existing private window
-                                // assume that the windows are ordered by FF
-                                // in some meaningful way, can't see any defined
-                                // order on MDN so just use the first one.
-                                // it is probably z order which is what we want.
-                                browser.tabs.create({
-                                    url: oldTab.url,
-                                    active: true,
-                                    windowId: incognitoWindows[0].id
-                                }).then((_) => {
-                                    // Focus the window we just created a tab for
-                                    browser.windows.update(incognitoWindows[0].id, {
-                                        focused: true
-                                    }).catch(core.expect('Failed to focus incognito window'))
-                                }).catch(core.expect('Failed to create incognito tab in existing window'))
+                                browser.storage.local.get('switchFocus').then((results) => {
+                                    let switchFocus = defaults['switchFocus']
+                                    if ('switchFocus' in results) {
+                                        switchFocus = results['switchFocus']
+                                    }
+                                    // use an existing private window
+                                    // assume that the windows are ordered by FF
+                                    // in some meaningful way, can't see any defined
+                                    // order on MDN so just use the first one.
+                                    // it is probably z order which is what we want.
+                                    browser.tabs.create({
+                                        url: oldTab.url,
+                                        active: switchFocus,
+                                        windowId: incognitoWindows[0].id
+                                    }).then((_) => {
+                                        // Focus the window we just created a tab for
+                                        browser.windows.update(incognitoWindows[0].id, {
+                                            focused: true
+                                        }).catch(core.expect('Failed to focus incognito window'))
+                                    }).catch(core.expect('Failed to create incognito tab in existing window'))
+                                }).catch(core.expect('Failed to get local storage settings'))
                             } else {
                                 // need to create the incognito window
                                 browser.windows.create({

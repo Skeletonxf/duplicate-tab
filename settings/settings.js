@@ -83,6 +83,11 @@ document.addEventListener("DOMContentLoaded", () => {
           // will be undefined on android
           disable(document.querySelector('#commandSettings'))
       }
+
+      if (browser.tabs.move === undefined) {
+          // will be undefined on android
+          disable(document.querySelector('#locationSettings'))
+      }
     }
 
     browser.extension.isAllowedIncognitoAccess().then((isAllowed) => {

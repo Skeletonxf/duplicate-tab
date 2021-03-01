@@ -46,17 +46,36 @@ class DuplicationLogic {
                 })
                 return
             }
-            browser.tabs.duplicate(oldTab.id).then((tab) => {
-                // Older versions of Firefox didn't switch focus automatically
-                // when using duplicate. Newer ones do, but if the user toggles
-                // the switchFocus setting we then need to switch back to
-                // prevent the newer default behaviour.
-              core.settings.doIf('switchFocus', defaults, () => {
-                browser.tabs.update(tab.id, {active: true})
-              }, () => {
-                browser.tabs.update(oldTab.id, {active: true})
-              })
-          }).catch(core.expect('Failed to duplicate tab'))
+            browser.storage.local.get(['switchFocus', 'duplicateLocation']).then((results) => {
+                let switchFocus = defaults['switchFocus']
+                if ('switchFocus' in results) {
+                    switchFocus = results['switchFocus']
+                }
+                let duplicateLocation = defaults['duplicateLocation']
+                if ('duplicateLocation' in results) {
+                    duplicateLocation = results['duplicateLocation']
+                }
+                let duplicateProperties = {}
+                duplicateProperties.active = switchFocus
+                // if the browser is set to send to end, and we are configured
+                // to place after current, we need to set this before duplicating
+                // otherwise the UX is choppy due to the browser moving the tab
+                // around
+                if (duplicateLocation === 'afterCurrent') {
+                    duplicateProperties.index = oldTab.index + 1
+                }
+                browser.tabs.duplicate(oldTab.id, duplicateProperties)
+                    .then((tab) => {
+                        if (duplicateLocation === 'right') {
+                            // For some reason -1 sends to start when passed to
+                            // duplicate, but sends to end when passed to move
+                            // so we have to move the tab after duplicating
+                            browser.tabs.move(tab.id, {index: -1})
+                                .catch(core.expect('Failed to move tab to end'))
+                        }
+                    })
+                    .catch(core.expect('Failed to duplicate tab'))
+            }).catch(core.expect('Failed to get local storage settings'))
         }
 
         this.advancedDuplicateTab = (oldTab) => {
@@ -129,21 +148,17 @@ class DuplicationLogic {
                                     // Focus the window we just created a tab for
                                     browser.windows.update(normalWindows[0].id, {
                                         focused: true
-                                    }).catch(core.expect(
-                                        'Failed to focus normal window'))
+                                    }).catch(core.expect('Failed to focus normal window'))
                                 }).catch(
-                                    core.expect(
-                                        'Failed to create normal tab in existing window'))
+                                    core.expect('Failed to create normal tab in existing window'))
                             } else {
-                                // need to create the incognito window
+                                // need to create the normal window
                                 browser.windows.create({
                                     incognito: false,
                                     url: [ oldTab.url ]
-                                }).catch(core.expect(
-                                    'Failed to create window from old URL'))
+                                }).catch(core.expect('Failed to create window from old URL'))
                             }
-                        }).catch(core.expect(
-                            "Failed to get the browser's windows"))
+                        }).catch(core.expect("Failed to get the browser's windows"))
                     } else {
                         // can duplicate the old tab
                         this.duplicateTab(oldTab)
@@ -177,20 +192,16 @@ class DuplicationLogic {
                                     // Focus the window we just created a tab for
                                     browser.windows.update(incognitoWindows[0].id, {
                                         focused: true
-                                    }).catch(core.expect(
-                                        'Failed to focus incognito window'))
-                                }).catch(core.expect(
-                                    'Failed to create incognito tab in existing window'))
+                                    }).catch(core.expect('Failed to focus incognito window'))
+                                }).catch(core.expect('Failed to create incognito tab in existing window'))
                             } else {
                                 // need to create the incognito window
                                 browser.windows.create({
                                     incognito: true,
                                     url: [ oldTab.url ]
-                                }).catch(core.expect(
-                                    'Failed to create incognito window from old URL'))
+                                }).catch(core.expect('Failed to create incognito window from old URL'))
                             }
-                        }).catch(core.expect(
-                            "Failed to get the browser's windows"))
+                        }).catch(core.expect("Failed to get the browser's windows"))
                     }
                 }
                 if (request.selected === 'window') {
@@ -198,8 +209,7 @@ class DuplicationLogic {
                     browser.windows.create({
                         incognito: !!oldTab.incognito,
                         url: [ oldTab.url ]
-                    }).catch(core.expect(
-                        'Failed to create new window from old URL'))
+                    }).catch(core.expect('Failed to create new window from old URL'))
                 }
                 // close advanced duplication
                 tabDeleter.run()

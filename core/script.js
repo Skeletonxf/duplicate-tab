@@ -37,7 +37,7 @@ class Core {
                     if (doAction) {
                         action()
                     } else if (ifNot) {
-                      ifNot()
+                        ifNot()
                     }
                 }, this.expect('core.settings.doIf'))
             },

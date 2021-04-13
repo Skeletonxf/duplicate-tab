@@ -6,4 +6,4 @@ The main focus of this project has moved to keyboard shortcuts now that Firefox 
 
 ## License
 
-My code forming this project as a whole is licensed under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version or version 2.
+This project is licensed under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version or version 2.

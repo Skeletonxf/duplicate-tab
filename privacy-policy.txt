@@ -1,0 +1,3 @@
+Duplicate Tab does not collect any personal data. Duplicate Tab does not transmit any collected data anywhere.
+
+Please keep in mind that Duplicate Tab's functionality may provide information to external websites as a result of its operation, such as triggering a webpage to be downloaded, and any information provided through GitHub for Duplicate Tab such as screenshots is public.

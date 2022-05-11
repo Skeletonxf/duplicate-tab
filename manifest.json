@@ -11,6 +11,12 @@
     "page": "/background/index.html"
   },
 
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "77.0"
+    }
+  },
+
   "browser_action": {
     "browser_style": true,
     "default_icon": "icons/fork.svg",

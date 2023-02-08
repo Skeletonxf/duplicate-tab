@@ -1,7 +1,7 @@
 import core from '/core/script.js'
 import duplication from '/background/duplication.js'
 import defaults from '/settings/defaults.js'
-import ContextMenus from '/menus/script.js'
+import ContextMenus from '/menus/context-menus.js'
 
 /*
  * Function to determine the active tab to duplicate to then hand off to
@@ -29,15 +29,23 @@ function duplicateActiveTab(isAdvanced) {
 // listen for clicks on the icon to run the duplicate function
 browser.browserAction.onClicked.addListener(duplication.duplicateTab)
 
-let menus = new ContextMenus(duplication.duplicateTab, duplication.advancedDuplicateTab)
+let contextMenus = new ContextMenus()
 
 function refreshContextMenus() {
     // will be undefined on android
     if (browser.contextMenus) {
         core.settings.doIf(
-            'tabContext', defaults, menus.add.normal, menus.remove.normal)
+            'tabContext',
+            defaults,
+            () => { contextMenus.addNormalContextMenu(duplication.duplicateTab) },
+            () => { contextMenus.removeNormalContextMenu(duplication.duplicateTab) }
+        )
         core.settings.doIf(
-            'tabContextAdvanced', defaults, menus.add.advanced, menus.remove.advanced)
+            'tabContextAdvanced',
+            defaults,
+            () => { contextMenus.addAdvancedContextMenu(duplication.advancedDuplicateTab) },
+            () => { contextMenus.removeAdvancedContextMenu(duplication.advancedDuplicateTab) }
+        )
     }
 }
 

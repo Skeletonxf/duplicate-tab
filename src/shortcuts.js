@@ -6,7 +6,6 @@ export default class Shortcuts {
         })
         // get the first (only) tab in the array to duplicate
         let tab = tabs[0]
-        console.log("tab is ", tab)
         listener(tab)
     }
 
@@ -17,7 +16,6 @@ export default class Shortcuts {
         // will be undefined on android
         if (browser.commands) {
             browser.commands.onCommand.addListener((command) => {
-                console.log("command is ", command, normalListener, advancedListener)
                 if (command === 'duplicate-shortcut-1') {
                     this.duplicateActiveTab(normalListener)
                 }

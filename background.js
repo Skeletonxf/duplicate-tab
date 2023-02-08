@@ -3,19 +3,21 @@ import duplication from '/background/duplication.js'
 import defaults from '/settings/defaults.js'
 import ContextMenus from '/src/context-menus.js'
 import Shortcuts from '/src/shortcuts.js'
-
-// listen for clicks on the icon to run the duplicate function
-browser.browserAction.onClicked.addListener(duplication.duplicateTab)
+import DuplicateTab from '/src/duplicate-tab.js'
 
 let contextMenus = new ContextMenus()
 let shortcuts = new Shortcuts()
+let duplicateTab = new DuplicateTab()
 
-contextMenus.registerNormalContextMenu(duplication.duplicateTab)
+contextMenus.registerNormalContextMenu(duplicateTab.duplicate)
 contextMenus.registerAdvancedContextMenu(duplication.advancedDuplicateTab)
 shortcuts.registerKeyboardShortcuts(
-    duplication.duplicateTab,
+    duplicateTab.duplicate,
     duplication.advancedDuplicateTab
 )
+
+// listen for clicks on the icon to run the duplicate function
+browser.browserAction.onClicked.addListener(duplicateTab.duplicate)
 
 function refreshContextMenus() {
     // will be undefined on android
@@ -23,8 +25,8 @@ function refreshContextMenus() {
         core.settings.doIf(
             'tabContext',
             defaults,
-            () => { contextMenus.addNormalContextMenu(duplication.duplicateTab) },
-            () => { contextMenus.removeNormalContextMenu(duplication.duplicateTab) }
+            () => { contextMenus.addNormalContextMenu(duplicateTab.duplicate) },
+            () => { contextMenus.removeNormalContextMenu(duplicateTab.duplicate) }
         )
         core.settings.doIf(
             'tabContextAdvanced',

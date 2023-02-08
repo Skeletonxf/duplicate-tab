@@ -1,35 +1,21 @@
 import core from '/core/script.js'
 import duplication from '/background/duplication.js'
 import defaults from '/settings/defaults.js'
-import ContextMenus from '/menus/context-menus.js'
-
-/*
- * Function to determine the active tab to duplicate to then hand off to
- * duplication logic for that tab.
- */
-function duplicateActiveTab(isAdvanced) {
-    // get a Promise to retrieve the current tab
-    var gettingActiveTab = browser.tabs.query({
-        active: true,
-        currentWindow: true
-    })
-
-    // get the activate tab to duplicate from the Promise
-    gettingActiveTab.then((tabs) => {
-        // get the first (only) tab in the array to duplicate
-        let tab = tabs[0]
-        if (isAdvanced) {
-            duplication.advancedDuplicateTab(tab)
-        } else {
-            duplication.duplicateTab(tab)
-        }
-    }).catch(core.expect("Couldn't get the active tab"))
-}
+import ContextMenus from '/src/context-menus.js'
+import Shortcuts from '/src/shortcuts.js'
 
 // listen for clicks on the icon to run the duplicate function
 browser.browserAction.onClicked.addListener(duplication.duplicateTab)
 
 let contextMenus = new ContextMenus()
+let shortcuts = new Shortcuts()
+
+contextMenus.registerNormalContextMenu(duplication.duplicateTab)
+contextMenus.registerAdvancedContextMenu(duplication.advancedDuplicateTab)
+shortcuts.registerKeyboardShortcuts(
+    duplication.duplicateTab,
+    duplication.advancedDuplicateTab
+)
 
 function refreshContextMenus() {
     // will be undefined on android
@@ -77,21 +63,3 @@ browser.runtime.onConnect.addListener((port) => {
         })
     }
 })
-
-// will be undefined on android
-if (browser.commands) {
-    browser.commands.onCommand.addListener((command) => {
-        if (command === 'duplicate-shortcut-1') {
-            duplicateActiveTab(false)
-        }
-        if (command === 'duplicate-shortcut-2') {
-            duplicateActiveTab(false)
-        }
-        if (command === 'duplicate-shortcut-3') {
-            duplicateActiveTab(false)
-        }
-        if (command === 'advanced-duplicate-shortcut-1') {
-            duplicateActiveTab(true)
-        }
-    })
-}

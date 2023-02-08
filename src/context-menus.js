@@ -5,6 +5,14 @@ export default class ContextMenus {
     // TODO: Icon support here would help distinguish between Duplicate Tab
     // and the normal browser actions
 
+    registerNormalContextMenu(listener /* (Tab) -> () */) {
+        this.#registerContextMenu(contextMenuId, listener)
+    }
+
+    registerAdvancedContextMenu(listener /* (Tab) -> () */) {
+        this.#registerContextMenu(contextMenuAdvancedId, listener)
+    }
+
     addNormalContextMenu(listener /* (Tab) -> () */) {
         this.#addContextMenu(contextMenuId, 'Duplicate', listener)
     }
@@ -21,12 +29,7 @@ export default class ContextMenus {
         this.#removeContextMenu(contextMenuAdvancedId, listener)
     }
 
-    #addContextMenu(id, title, listener) {
-        browser.contextMenus.create({
-            id: id,
-            title: title,
-            contexts: [ 'tab' ]
-        })
+    #registerContextMenu(id, listener) {
         browser.contextMenus.onClicked.addListener((info, tab) => {
             if (info.menuItemId === id) {
                 listener(tab)
@@ -34,8 +37,15 @@ export default class ContextMenus {
         })
     }
 
+    #addContextMenu(id, title, listener) {
+        browser.contextMenus.create({
+            id: id,
+            title: title,
+            contexts: [ 'tab' ]
+        })
+    }
+
     #removeContextMenu(id, listener) {
         browser.contextMenus.remove(id)
-        browser.contextMenus.onClicked.removeListener(listener)
     }
 }

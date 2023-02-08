@@ -25,6 +25,10 @@ class IdempotentTabDeleter {
     }
 }
 
+// FIXME: Don't hold state here while waiting for Advanced Duplication page
+// to be interacted with, instead the state should be saved using the storage
+// APIs and all this logic should be purely functional
+
 class DuplicationLogic {
     constructor() {
         this.duplicateTab = (oldTab) => {
@@ -86,8 +90,8 @@ class DuplicationLogic {
                 // Place the duplicate WebExtension page just after the tab
                 index: oldTab.index + 1
             }).then((tab) => {
-                browser.tabs.executeScript(tab.id, {
-                    file: '/page/script.js'
+                browser.scripting.executeScript(tab.id, {
+                    files: ['/page/script.js']
                 }).then(() => {
                     // Send the WebExtension page the old tab's URL
                     browser.tabs.sendMessage(tab.id, {

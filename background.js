@@ -41,7 +41,9 @@ function refreshContextMenus() {
     }
 }
 
-refreshContextMenus()
+browser.runtime.onInstalled.addListener(() => {
+    refreshContextMenus()
+})
 
 // Expose a way to refresh the context menus (which can only be done from this
 // background script) from other places like the settings page

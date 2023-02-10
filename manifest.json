@@ -1,15 +1,14 @@
 {
   "description": "Duplicates the current tab",
   "homepage_url": "https://github.com/Skeletonxf/duplicate-tab/",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Duplicate Tab",
   "version": "3.0",
 
-  "permissions": ["contextMenus", "storage", "activeTab"],
+  "permissions": ["contextMenus", "storage", "activeTab", "scripting"],
 
   "background": {
-    "page": "/background-page.html",
-    "persistent": false
+    "page": "/background-page.html"
   },
 
   "browser_specific_settings": {
@@ -18,7 +17,7 @@
     }
   },
 
-  "browser_action": {
+  "action": {
     "browser_style": true,
     "default_icon": "icons/fork.svg",
     "default_title": "Duplicate tab",

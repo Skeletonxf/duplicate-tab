@@ -1,5 +1,5 @@
 import core from '/core/script.js'
-import duplication from '/background/duplication.js'
+//import duplication from '/background/duplication.js'
 import defaults from '/settings/defaults.js'
 import ContextMenus from '/src/context-menus.js'
 import Shortcuts from '/src/shortcuts.js'
@@ -10,14 +10,15 @@ let shortcuts = new Shortcuts()
 let duplicateTab = new DuplicateTab()
 
 contextMenus.registerNormalContextMenu(duplicateTab.duplicate)
-contextMenus.registerAdvancedContextMenu(duplication.advancedDuplicateTab)
+contextMenus.registerAdvancedContextMenu(duplicateTab.launchAdvancedDuplication)
 shortcuts.registerKeyboardShortcuts(
     duplicateTab.duplicate,
-    duplication.advancedDuplicateTab
+    duplicateTab.launchAdvancedDuplication
 )
+duplicateTab.registerTabChanges()
 
 // listen for clicks on the icon to run the duplicate function
-browser.browserAction.onClicked.addListener(duplicateTab.duplicate)
+browser.action.onClicked.addListener(duplicateTab.duplicate)
 
 function refreshContextMenus() {
     // will be undefined on android
@@ -31,14 +32,28 @@ function refreshContextMenus() {
         core.settings.doIf(
             'tabContextAdvanced',
             defaults,
-            () => { contextMenus.addAdvancedContextMenu(duplication.advancedDuplicateTab) },
-            () => { contextMenus.removeAdvancedContextMenu(duplication.advancedDuplicateTab) }
+            () => { contextMenus.addAdvancedContextMenu(duplicateTab.launchAdvancedDuplication) },
+            () => { contextMenus.removeAdvancedContextMenu(duplicateTab.launchAdvancedDuplication) }
         )
     }
 }
 
 browser.runtime.onInstalled.addListener(() => {
+    console.log('Installed')
     refreshContextMenus()
+    duplicateTab.clearSessionTabData()
+})
+
+browser.runtime.onStartup.addListener(() => {
+    console.log('Started')
+    duplicateTab.clearSessionTabData()
+})
+
+browser.runtime.onSuspend.addListener(() => {
+    console.log('Suspending')
+    // FIXME: switch to session storage once supported
+    // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/session
+    duplicateTab.clearSessionTabData()
 })
 
 // Expose a way to refresh the context menus (which can only be done from this

@@ -35,6 +35,15 @@ class Settings {
         }
         return results
     }
+
+    /**
+     * Sets the value of a key in local storage.
+     */
+    async setKeyValue(key, /* string */ value /* anything JSONifiable */) {
+        let setting = {}
+        setting[key] = value
+        await browser.storage.local.set(setting)
+    }
 }
 
 let instance = new Settings()

@@ -1,5 +1,7 @@
 import settings from '/src/settings.js'
 
+const advancedDuplicateTabPage = 'advanced-duplication-page-tab-id'
+
 function browserSupportsDuplicate() {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1515455
     // Not supported on Android despite documentation saying otherwise on MDN
@@ -42,6 +44,62 @@ export default class DuplicateTab {
         await browser.tabs.create({
             url: oldTab.url,
             active: switchFocus
+        })
+    }
+
+    async launchAdvancedDuplication(oldTab /* Tab */) {
+        let tab = await browser.tabs.create({
+            url: '/page/page.html',
+            active: true,
+            // Place the duplicate WebExtension page just after the tab
+            index: oldTab.index + 1
+        })
+        /* await */ browser.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['/page/script.js']
+        })
+        // Send the WebExtension page the old tab's URL
+        /*await*/ browser.tabs.sendMessage(tab.id, {
+            url: oldTab.url,
+            incognito: oldTab.incognito
+        })
+        let isAllowed = await browser.extension.isAllowedIncognitoAccess()
+        /*await*/ browser.tabs.sendMessage(tab.id, {
+            incognitoAccessQuery: true,
+            allowedIncognitoAccess: isAllowed
+        })
+        // Since we could be unloaded while the page is open, save the tab ID
+        // to local storage.
+        // Once session storage is supported, we should use that instead because
+        // then it will match the storage duration to how long the tab ID is
+        // valid for.
+        // This does create a minor edge case of users closing their
+        // browser with reopening windows enabled and then Duplicate Tab losing
+        // the advanced duplication tab ID, but this is way less bad than
+        // Duplicate Tab persisting a tab ID that clashes with a tab in a new
+        // session and closing that one instead.
+        await settings.setKeyValue(advancedDuplicateTabPage, tab.id)
+    }
+
+    async clearSessionTabData() {
+        await settings.setKeyValue(advancedDuplicateTabPage, null)
+    }
+
+    async registerTabChanges() {
+        // It would be nice to not have to listen to active tab changes except
+        // for ones that belong to our extension, but I don't see any way to
+        // configure this on the docs
+        browser.tabs.onActivated.addListener(async (activeInfo) => {
+            const { previousTabId } = activeInfo
+            let id = await settings.getKeyValue(advancedDuplicateTabPage)
+            if (id !== null && id !== undefined && previousTabId === id) {
+                // If the advanced duplication page is no longer active, we
+                // should automatically remove it.
+                await browser.tabs.remove(id)
+                // Since Tab IDs are unique to a browser session we should never
+                // see this id again, but clear it anyway to be extra sure.
+                await settings.setKeyValue(advancedDuplicateTabPage, null)
+            }
         })
     }
 }

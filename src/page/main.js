@@ -82,6 +82,7 @@ buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
 
         document.querySelector('#privateBrowsingPermission').classList.remove('hidden')
 
+        // TODO: Getting this to work again
         let launcher = document.querySelector('#openOptionsPage')
         let port = browser.runtime.connect({
             name: 'optionsPage'

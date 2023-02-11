@@ -45,7 +45,7 @@
     <div class="setting setting-group setting-columns" id="locationSettings">
       <div>
         <input type="radio" id="duplicateLocationBrowser" name="duplicateLocation" value="browser" checked>
-        <label for="duplicateLocationBrowser">Default - Place duplicated tabs according to Firefox's settings</label>
+        <label for="duplicateLocationBrowser">Default - Place duplicated tabs according to Firefox's settings*</label>
       </div>
       <div>
         <input type="radio" id="duplicateLocationRight" name="duplicateLocation" value="right">
@@ -55,6 +55,11 @@
         <input type="radio" id="duplicateLocationAfterCurrent" name="duplicateLocation" value="afterCurrent">
         <label for="duplicateLocationAfterCurrent">Place duplicated tabs directly after the original</label>
       </div>
+      <p>
+          * - This typically puts a tab directly after the original, but not always.
+          Firefox's behaviour can be configured in <code>about:config</code> under
+          the <code>browser.tabs.insertRelatedAfterCurrent</code> and
+          <code>browser.tabs.insertAfterCurrent</code> preferences</p>
     </div>
 
     <div class="setting-group" id="commandSettings">

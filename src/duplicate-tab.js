@@ -1,6 +1,7 @@
 import settings from '/src/settings.js'
 
 const advancedDuplicateTabPage = 'advanced-duplication-page-tab-id'
+const oldTabData = 'old-tab-data'
 
 function browserSupportsDuplicate() {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1515455
@@ -48,9 +49,11 @@ export default class DuplicateTab {
     }
 
     async launchAdvancedDuplication(oldTab /* Tab */) {
-        // TODO: These async values to save can be done in parallel
-        await settings.setKeyValue('old-tab-url', oldTab.url)
-        await settings.setKeyValue('old-tab-is-incognito', oldTab.incognito)
+        await settings.setKeyValue(oldTabData, {
+            url: oldTab.url,
+            incognito: oldTab.incognito,
+            id: oldTab.id
+        })
         let tab = await browser.tabs.create({
             url: '/src/page/page.html',
             active: true,
@@ -73,8 +76,7 @@ export default class DuplicateTab {
     async clearSessionTabData() {
         // TODO: Can run this in parallel
         await settings.setKeyValue(advancedDuplicateTabPage, null)
-        await settings.setKeyValue('old-tab-url', null)
-        await settings.setKeyValue('old-tab-incognito', null)
+        await settings.setKeyValue(oldTabData, null)
     }
 
     async registerTabChanges() {
@@ -82,37 +84,23 @@ export default class DuplicateTab {
         // for ones that belong to our extension, but I don't see any way to
         // configure this on the docs
         browser.tabs.onActivated.addListener(async (activeInfo) => {
-            const { previousTabId } = activeInfo
-            let id = await settings.getKeyValue(advancedDuplicateTabPage)
-            if (id !== null && id !== undefined && previousTabId === id) {
-                // If the advanced duplication page is no longer active, we
-                // should automatically remove it.
-                await browser.tabs.remove(id)
-                // Since Tab IDs are unique to a browser session we should never
-                // see this id again, but clear it anyway to be extra sure.
-                await clearSessionTabData()
+            try {
+                const { previousTabId } = activeInfo
+                let id = await settings.getKeyValue(advancedDuplicateTabPage)
+                if (id !== null && id !== undefined && previousTabId === id) {
+                    // If the advanced duplication page is no longer active, we
+                    // should automatically remove it.
+                    await this.#closeAdvancedDuplicationPageAndClearData(id)
+                }
+            } catch (error) {
+                console.error('Error listening to onActivated changes', error)
             }
         })
     }
 
-    async #respondToPage(data, sender) {
-        if (data.selected === 'normal') {
-            console.log('normal duplication requested')
-        }
-        if (data.selected === 'private') {
-            console.log('private duplication requested')
-        }
-        if (data.selected === 'window') {
-            console.log('window duplication requested')
-        }
-        if (data.getPageData === true) {
-            // TODO: Can get these in parallel
-            return {
-                url: await settings.getKeyValue('old-tab-url'),
-                oldTabIsIncognito: await settings.getKeyValue('old-tab-incognito'),
-                allowedIncognitoAccess: await browser.extension.isAllowedIncognitoAccess()
-            }
-        }
+    async #closeAdvancedDuplicationPageAndClearData(id) {
+        await browser.tabs.remove(id)
+        await this.clearSessionTabData()
     }
 
     registerMessageListening() {
@@ -127,5 +115,42 @@ export default class DuplicateTab {
                 return false;
             }
         })
+    }
+
+    async #respondToPage(data, sender) {
+        try {
+            const { url, incognito, id } = await settings.getKeyValue(oldTabData)
+            if (data.selected === 'normal') {
+                console.log('normal duplication requested')
+                if (incognito === false) {
+                    await this.#duplicateSameTypeOfTab(id)
+                    return true;
+                }
+            }
+            if (data.selected === 'private') {
+                console.log('private duplication requested')
+                if (incognito === true) {
+                    await this.#duplicateSameTypeOfTab(id)
+                    return true;
+                }
+            }
+            if (data.selected === 'window') {
+                console.log('window duplication requested')
+                return true;
+            }
+            if (data.getPageData === true) {
+                return {
+                    url: url,
+                    oldTabIsIncognito: incognito,
+                    allowedIncognitoAccess: await browser.extension.isAllowedIncognitoAccess()
+                }
+            }
+        } catch (error) {
+            console.error('Error responding to page', error)
+        }
+    }
+
+    async #duplicateSameTypeOfTab(id) {
+        await this.duplicate(await browser.tabs.get(id))
     }
 }

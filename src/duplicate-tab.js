@@ -49,15 +49,15 @@ export default class DuplicateTab {
 
     async launchAdvancedDuplication(oldTab /* Tab */) {
         let tab = await browser.tabs.create({
-            url: '/page/page.html',
+            url: '/src/page/page.html',
             active: true,
             // Place the duplicate WebExtension page just after the tab
             index: oldTab.index + 1
         })
-        /* await */ browser.scripting.executeScript({
-            target: { tabId: tab.id },
-            files: ['/page/script.js']
-        })
+        // /* await */ browser.scripting.executeScript({
+        //     target: { tabId: tab.id },
+        //     files: ['/page/script.js']
+        // }).catch((error) => {console.error(error)})
         // Send the WebExtension page the old tab's URL
         /*await*/ browser.tabs.sendMessage(tab.id, {
             url: oldTab.url,

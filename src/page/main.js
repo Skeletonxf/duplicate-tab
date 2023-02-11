@@ -1,3 +1,5 @@
+console.log('Page script initialising')
+
 let buttons = new Map()
 buttons.set('normal', {
     id: 'normal',
@@ -33,6 +35,8 @@ class IdempotentElementDeleter {
 }
 
 buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
+
+console.log('Adding listeners')
 
 browser.runtime.onMessage.addListener(function urlListener(request) {
     if (request.url) {
@@ -100,6 +104,8 @@ browser.runtime.onMessage.addListener(function incognitoAccessListener(request) 
     }
 })
 
+console.log('Finished adding listeners')
+
 buttons.get('normal').element.focus()
 
 buttons.forEach((b) => {
@@ -131,3 +137,5 @@ buttons.forEach((b) => {
         }
     })
 })
+
+console.log('Finished executing')

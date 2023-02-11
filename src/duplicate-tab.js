@@ -48,26 +48,15 @@ export default class DuplicateTab {
     }
 
     async launchAdvancedDuplication(oldTab /* Tab */) {
+        // TODO: These async values to save can be done in parallel
+        await settings.setKeyValue('old-tab-url', oldTab.url)
+        await settings.setKeyValue('old-tab-is-incognito', oldTab.incognito)
         let tab = await browser.tabs.create({
             url: '/src/page/page.html',
             active: true,
             // Place the duplicate WebExtension page just after the tab
             index: oldTab.index + 1
         })
-        // /* await */ browser.scripting.executeScript({
-        //     target: { tabId: tab.id },
-        //     files: ['/page/script.js']
-        // }).catch((error) => {console.error(error)})
-        // Send the WebExtension page the old tab's URL
-        // /*await*/ browser.tabs.sendMessage(tab.id, {
-        //     url: oldTab.url,
-        //     incognito: oldTab.incognito
-        // })
-        // let isAllowed = await browser.extension.isAllowedIncognitoAccess()
-        // /*await*/ browser.tabs.sendMessage(tab.id, {
-        //     incognitoAccessQuery: true,
-        //     allowedIncognitoAccess: isAllowed
-        // })
         // Since we could be unloaded while the page is open, save the tab ID
         // to local storage.
         // Once session storage is supported, we should use that instead because
@@ -82,7 +71,10 @@ export default class DuplicateTab {
     }
 
     async clearSessionTabData() {
+        // TODO: Can run this in parallel
         await settings.setKeyValue(advancedDuplicateTabPage, null)
+        await settings.setKeyValue('old-tab-url', null)
+        await settings.setKeyValue('old-tab-incognito', null)
     }
 
     async registerTabChanges() {
@@ -98,12 +90,12 @@ export default class DuplicateTab {
                 await browser.tabs.remove(id)
                 // Since Tab IDs are unique to a browser session we should never
                 // see this id again, but clear it anyway to be extra sure.
-                await settings.setKeyValue(advancedDuplicateTabPage, null)
+                await clearSessionTabData()
             }
         })
     }
 
-    async #respondToPage(data, sender, sendResponse) {
+    async #respondToPage(data, sender) {
         if (data.selected === 'normal') {
             console.log('normal duplication requested')
         }
@@ -113,6 +105,14 @@ export default class DuplicateTab {
         if (data.selected === 'window') {
             console.log('window duplication requested')
         }
+        if (data.getPageData === true) {
+            // TODO: Can get these in parallel
+            return {
+                url: await settings.getKeyValue('old-tab-url'),
+                oldTabIsIncognito: await settings.getKeyValue('old-tab-incognito'),
+                allowedIncognitoAccess: await browser.extension.isAllowedIncognitoAccess()
+            }
+        }
     }
 
     registerMessageListening() {
@@ -120,9 +120,9 @@ export default class DuplicateTab {
         // certain type, you must define the listener as a non-async function,
         // and return a Promise only for the messages the listener is meant to
         // respond to — and otherwise return false or undefined:
-        browser.runtime.onMessage.addListener((data, sender, sendResponse) => {
+        browser.runtime.onMessage.addListener((data, sender) => {
             if (data.type === "page") {
-                return this.#respondToPage(data, sender, sendResponse)
+                return this.#respondToPage(data, sender)
             } else {
                 return false;
             }

@@ -1,5 +1,3 @@
-console.log('Page script initialising')
-
 let buttons = new Map()
 buttons.set('normal', {
     id: 'normal',
@@ -36,75 +34,65 @@ class IdempotentElementDeleter {
 
 buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
 
-console.log('Adding listeners')
-
-browser.runtime.onMessage.addListener(function urlListener(request) {
-    if (request.url) {
-        document.getElementById('header').textContent += (' ' + request.url + ' into:')
-
-        // try to auto detect privileged urls that can't be transfered
-        // into/out of private windows
-        {
-            let privileged = false
-            let url = request.url.toLowerCase()
-            if (!url.includes('http:') && !url.includes('https:')) {
-                privileged = url.includes('about:debugging')
-                || url.includes('about:addons')
-                || url.includes('about:config')
-                || url.includes('about:newtab')
-            }
-            if (privileged) {
-                // can't create privileged tabs so transfering between windows
-                // doesn't work, but can still duplicate them.
-                if (request.incognito) {
-                    buttons.get('normal').deleter.run()
-                } else {
-                    buttons.get('private').deleter.run()
-                }
-                buttons.get('window').deleter.run()
-
-                document.querySelector('#privilegedTab').classList.remove('hidden')
-            }
+;(async () => {
+    let response = await browser.runtime.sendMessage({
+        type: 'page',
+        getPageData: true
+    })
+    const { url } = response
+    document.getElementById('header').textContent += (' ' + url + ' into:')
+    // try to auto detect privileged urls that can't be transfered
+    // into/out of private windows
+    {
+        let privileged = false
+        let lowercased = url.toLowerCase()
+        if (!lowercased.includes('http:') && !lowercased.includes('https:')) {
+            privileged = lowercased.includes('about:debugging')
+            || lowercased.includes('about:addons')
+            || lowercased.includes('about:config')
+            || lowercased.includes('about:newtab')
         }
+        if (privileged) {
+            // can't create privileged tabs so transfering between windows
+            // doesn't work, but can still duplicate them.
+            if (request.incognito) {
+                buttons.get('normal').deleter.run()
+            } else {
+                buttons.get('private').deleter.run()
+            }
+            buttons.get('window').deleter.run()
 
-        browser.runtime.onMessage.removeListener(urlListener)
-
-        // also style new window button to type of window to create
-        if (request.incognito) {
-            buttons.get('window').element.classList.add('private-style')
-            buttons.get('window').element.classList.remove('normal-style')
+            document.querySelector('#privilegedTab').classList.remove('hidden')
         }
     }
-})
-
-browser.runtime.onMessage.addListener(function incognitoAccessListener(request) {
-    if (request.incognitoAccessQuery) {
-        if (request.allowedIncognitoAccess === false) {
-            // the only case that needs user notification is moving
-            // a non incognito tab to an incognito window because
-            // if incognito permissions are not given it is impossible
-            // to launch the advanced duplication tab in a private
-            // window
-            buttons.get('private').deleter.run()
-
-            document.querySelector('#privateBrowsingPermission').classList.remove('hidden')
-
-            let launcher = document.querySelector('#openOptionsPage')
-            let port = browser.runtime.connect({
-                name: 'optionsPage'
-            })
-            launcher.addEventListener('click', () => {
-                port.postMessage({
-                    openOptionsPage: true
-                })
-            })
-        }
-
-        browser.runtime.onMessage.removeListener(incognitoAccessListener)
+    const { oldTabIsIncognito } = response
+    // also style new window button to type of window to create
+    if (oldTabIsIncognito) {
+        buttons.get('window').element.classList.add('private-style')
+        buttons.get('window').element.classList.remove('normal-style')
     }
-})
+    const { allowedIncognitoAccess } = response
+    if (allowedIncognitoAccess === false) {
+        // the only case that needs user notification is moving
+        // a non incognito tab to an incognito window because
+        // if incognito permissions are not given it is impossible
+        // to launch the advanced duplication tab in a private
+        // window
+        buttons.get('private').deleter.run()
 
-console.log('Finished adding listeners')
+        document.querySelector('#privateBrowsingPermission').classList.remove('hidden')
+
+        let launcher = document.querySelector('#openOptionsPage')
+        let port = browser.runtime.connect({
+            name: 'optionsPage'
+        })
+        launcher.addEventListener('click', () => {
+            port.postMessage({
+                openOptionsPage: true
+            })
+        })
+    }
+})()
 
 buttons.get('normal').element.focus()
 
@@ -140,5 +128,3 @@ buttons.forEach((b) => {
         }
     })
 })
-
-console.log('Finished executing')

@@ -115,6 +115,7 @@ buttons.forEach((b) => {
 
     b.element.addEventListener('click', () => {
         browser.runtime.sendMessage({
+            type: "page",
             selected: b.id
         })
     })
@@ -123,6 +124,7 @@ buttons.forEach((b) => {
         // only select with enter on the focused element
         if (b.element === document.activeElement && event.key === 'Enter') {
             browser.runtime.sendMessage({
+                type: "page",
                 selected: b.id
             })
         }
@@ -132,6 +134,7 @@ buttons.forEach((b) => {
     document.body.addEventListener('keypress', (event) => {
         if (b.shortcuts.includes(event.key)) {
             browser.runtime.sendMessage({
+                type: "page",
                 selected: b.id
             })
         }

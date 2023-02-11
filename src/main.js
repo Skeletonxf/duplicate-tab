@@ -16,6 +16,7 @@ shortcuts.registerKeyboardShortcuts(
     duplicateTab.launchAdvancedDuplication
 )
 duplicateTab.registerTabChanges()
+duplicateTab.registerMessageListening()
 
 // listen for clicks on the icon to run the duplicate function
 browser.action.onClicked.addListener(duplicateTab.duplicate)

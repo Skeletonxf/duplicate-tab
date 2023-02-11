@@ -59,15 +59,15 @@ export default class DuplicateTab {
         //     files: ['/page/script.js']
         // }).catch((error) => {console.error(error)})
         // Send the WebExtension page the old tab's URL
-        /*await*/ browser.tabs.sendMessage(tab.id, {
-            url: oldTab.url,
-            incognito: oldTab.incognito
-        })
-        let isAllowed = await browser.extension.isAllowedIncognitoAccess()
-        /*await*/ browser.tabs.sendMessage(tab.id, {
-            incognitoAccessQuery: true,
-            allowedIncognitoAccess: isAllowed
-        })
+        // /*await*/ browser.tabs.sendMessage(tab.id, {
+        //     url: oldTab.url,
+        //     incognito: oldTab.incognito
+        // })
+        // let isAllowed = await browser.extension.isAllowedIncognitoAccess()
+        // /*await*/ browser.tabs.sendMessage(tab.id, {
+        //     incognitoAccessQuery: true,
+        //     allowedIncognitoAccess: isAllowed
+        // })
         // Since we could be unloaded while the page is open, save the tab ID
         // to local storage.
         // Once session storage is supported, we should use that instead because
@@ -99,6 +99,32 @@ export default class DuplicateTab {
                 // Since Tab IDs are unique to a browser session we should never
                 // see this id again, but clear it anyway to be extra sure.
                 await settings.setKeyValue(advancedDuplicateTabPage, null)
+            }
+        })
+    }
+
+    async #respondToPage(data, sender, sendResponse) {
+        if (data.selected === 'normal') {
+            console.log('normal duplication requested')
+        }
+        if (data.selected === 'private') {
+            console.log('private duplication requested')
+        }
+        if (data.selected === 'window') {
+            console.log('window duplication requested')
+        }
+    }
+
+    registerMessageListening() {
+        // From MDN: If you only want the listener to respond to messages of a
+        // certain type, you must define the listener as a non-async function,
+        // and return a Promise only for the messages the listener is meant to
+        // respond to — and otherwise return false or undefined:
+        browser.runtime.onMessage.addListener((data, sender, sendResponse) => {
+            if (data.type === "page") {
+                return this.#respondToPage(data, sender, sendResponse)
+            } else {
+                return false;
             }
         })
     }

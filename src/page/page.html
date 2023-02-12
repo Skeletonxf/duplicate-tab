@@ -8,36 +8,42 @@
     <title>Duplicate Tab</title>
   </head>
   <body>
-    <h1 id="header">Duplicate</h1>
+    <h1 id="header">
+        <div id="header-content">
+            <p>Duplicate <span id="page-url"></span><span id="page-url-suffix" class="hidden"> into:</span></p>
+        </div>
+    </h1>
     <div id="grid">
-      <div id="normal" tabindex="1" autofocus>
+      <button id="normal" class="grid-button-item normal-style" tabindex="1" autofocus>
           <span><span class="button-shortcut">N</span>ormal Tab</span>
           <span class="shortcut dark-shortcut">1</span>
-      </div>
-      <div id="private" tabindex="1">
+      </button>
+      <button id="private" class="grid-button-item private-style" tabindex="1">
           <span><span class="button-shortcut">P</span>rivate Browsing Tab</span>
           <span class="shortcut white-shortcut">2</span>
-      </div>
-      <div id="window" tabindex="1" class="normal-style">
+      </button>
+      <button id="window" class="grid-button-item normal-style" tabindex="1">
           <span>New <span class="button-shortcut">W</span>indow</span>
           <span class="shortcut window-shortcut">3</span>
-      </div>
-      <div id="move-window" tabindex="1" class="normal-style">
+      </button>
+      <button id="move-window" class="grid-button-item normal-style" tabindex="1">
           <span><span class="button-shortcut">M</span>ove to new Window</span>
           <span class="shortcut window-shortcut">4</span>
-      </div>
+      </button>
     </div>
-    <p>Tab / Shift+Tab and Enter or click with your mouse</p>
-    <div class="notice hidden" id="privateBrowsingPermission">
-        <p class="highlight">
-            Duplicate Tab requires your permission to run in
-            private windows for all functionality involving private browsing.
-        </p>
-        <button id="openOptionsPage">Configure Addon</button>
-    </div>
-    <div class="notice hidden" id="privilegedTab">
-        <h2>Where did one of my buttons go?</h2>
-        <p>Your tab has a privileged url that Duplicate Tab can't create.</p>
-    </div>
+    <footer>
+        <p>Tab / Shift+Tab and Enter or click with your mouse</p>
+        <div class="notice hidden" id="privateBrowsingPermission">
+            <p class="highlight">
+                Duplicate Tab requires your permission to run in
+                private windows for all functionality involving private browsing.
+            </p>
+            <button id="openOptionsPage">Configure Addon</button>
+        </div>
+        <div class="notice hidden" id="privilegedTab">
+            <h2>Where did one of my buttons go?</h2>
+            <p>Your tab has a privileged url that Duplicate Tab can't create.</p>
+        </div>
+    </footer>
   </body>
 </html>

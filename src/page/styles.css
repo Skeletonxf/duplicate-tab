@@ -1,5 +1,36 @@
+* {
+    font-family: sans-serif;
+}
+
+#header {
+    margin-top: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#header-content {
+    max-width: 80rem;
+    text-align: center;
+}
+
+#header p {
+    margin: 0px;
+}
+
+h1 p, h1 span {
+    font-size: 36px;
+}
+
+h1 p #page-url {
+    font-size: 36px;
+    font-family: monospace;
+}
+
 #grid {
-    padding: 1em;
+    padding: 20px;
     background-color: whitesmoke;
     border-radius: 12px;
     display: flex;
@@ -8,14 +39,14 @@
     justify-content: center;
 }
 
-#grid div {
+#grid .grid-button-item {
     margin: 20px;
-    border-radius: 24px;
+    border-radius: 12px;
     padding: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 5px solid silver;
+    border: 4px solid #9b94a0;
     cursor: pointer;
     position: relative;
     height: 30vmin;
@@ -23,27 +54,39 @@
 }
 
 span {
-    vertical-align: middle;
+    vertical-align: baseline;
     text-align: center;
     font-size: 5vh;
 }
 
-#grid div:focus {
-    border: 8px solid silver;
-    box-shadow: 8px 8px 16px grey;
-    margin: 17px;
-}
-
-#normal {
-    /* blank new tab page */
-    background-color: #F9F9FA;
+.normal-style {
+    /* blank new tab page color */
+    background-image: linear-gradient(#F9F9FA, #F9F9FA);
     color: black;
 }
 
-#private {
+.private-style {
     /* Firefox's private browsing colour */
-    background-color: #25003E;
+    background-image: linear-gradient(#25003E, #25003E);
     color: white;
+}
+
+/*
+ * For the focused state, tint the background to be slightly lighter/darker
+ * and increase the emphasis on the border.
+ * Using linear gradients here to stack colors.
+ */
+
+.normal-style:focus {
+    background-image: linear-gradient(#00000022, #00000022), linear-gradient(#F9F9FA, #F9F9FA);
+    border-color: #934ec4 !important;
+    outline: 2px solid #934ec4;
+}
+
+.private-style:focus {
+    background-image: linear-gradient(#FFFFFF22, #FFFFFF22), linear-gradient(#25003E, #25003E);
+    border-color: #934ec4 !important;
+    outline: 2px solid #934ec4;
 }
 
 .button-shortcut {
@@ -67,11 +110,10 @@ span {
     position: absolute;
     top: -0.5em;
     left: -0.5em;
-    border: 1px solid black;
     border-radius: 0.6em;
     width: 1.2em;
     height: 1.2em;
-
+    border: 2px solid #9b94a0;
 }
 
 .dark-shortcut {
@@ -82,12 +124,6 @@ span {
 .white-shortcut {
     color: black;
     background-color: white;
-    border-color: white;
-}
-
-.normal-style {
-    background-color: #F9F9FA;
-    color: black;
 }
 
 .normal-style .window-shortcut {
@@ -95,13 +131,12 @@ span {
     background-color: black;
 }
 
-.private-style {
-    background-color: #25003E;
-    color: white;
-}
-
 .private-style .window-shortcut {
     color: black;
     background-color: white;
     border-color: white;
+}
+
+footer {
+    padding: 20px;
 }

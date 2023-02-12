@@ -45,7 +45,9 @@ buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
     })
     const { url } = response
     const { oldTabIsIncognito } = response
-    document.getElementById('header').textContent += (' ' + url + ' into:')
+
+    document.getElementById('page-url').textContent += (url)
+    document.getElementById('page-url-suffix').classList.remove('hidden')
     // try to auto detect privileged urls that can't be transfered
     // into/out of private windows
     {

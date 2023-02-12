@@ -74,7 +74,6 @@ export default class DuplicateTab {
     }
 
     async clearSessionTabData() {
-        // TODO: Can run this in parallel
         await settings.setKeyValue(advancedDuplicateTabPage, null)
         await settings.setKeyValue(oldTabData, null)
     }
@@ -98,9 +97,18 @@ export default class DuplicateTab {
         })
     }
 
-    async #closeAdvancedDuplicationPageAndClearData(id) {
+    async #closeAdvancedDuplicationPageAndClearData(
+        id /* Tab id of the Duplicate Tab UI page */
+    ) {
         await browser.tabs.remove(id)
         await this.clearSessionTabData()
+    }
+
+    async #getAndCloseAdvancedDuplicationPageAndClearData() {
+        let id = await settings.getKeyValue(advancedDuplicateTabPage)
+        if (id !== null && id !== undefined) {
+            await this.#closeAdvancedDuplicationPageAndClearData(id)
+        }
     }
 
     registerMessageListening() {
@@ -121,22 +129,27 @@ export default class DuplicateTab {
         try {
             const { url, incognito, id } = await settings.getKeyValue(oldTabData)
             if (data.selected === 'normal') {
-                console.log('normal duplication requested')
                 if (incognito === false) {
                     await this.#duplicateSameTypeOfTab(id)
-                    return true;
+                } else {
+                    await this.#createNewTabInWindow(url, false, true)
+                    await this.#getAndCloseAdvancedDuplicationPageAndClearData()
                 }
+                return true
             }
             if (data.selected === 'private') {
-                console.log('private duplication requested')
                 if (incognito === true) {
                     await this.#duplicateSameTypeOfTab(id)
-                    return true;
+                } else {
+                    await this.#createNewTabInWindow(url, true, true)
+                    await this.#getAndCloseAdvancedDuplicationPageAndClearData()
                 }
+                return true
             }
             if (data.selected === 'window') {
-                console.log('window duplication requested')
-                return true;
+                await this.#createNewTabInWindow(url, incognito, false)
+                await this.#getAndCloseAdvancedDuplicationPageAndClearData()
+                return true
             }
             if (data.getPageData === true) {
                 return {
@@ -147,10 +160,41 @@ export default class DuplicateTab {
             }
         } catch (error) {
             console.error('Error responding to page', error)
+            await this.#getAndCloseAdvancedDuplicationPageAndClearData()
+            return true
         }
     }
 
     async #duplicateSameTypeOfTab(id) {
         await this.duplicate(await browser.tabs.get(id))
+    }
+
+    async #createNewTabInWindow(url, incognito, useExistingWindows) {
+        if (useExistingWindows) {
+            let switchFocus = await settings.getKeyValue('switchFocus')
+            let windows = (await browser.windows.getAll({
+                windowTypes: ['normal']
+            })).filter(w => w.incognito === incognito)
+            if (windows.length > 0) {
+                // use an existing private window, assuming that the windows are
+                // ordered by FF in some meaningful way, I can't see any defined
+                // order on MDN so just use the first one. It is probably z
+                // order which is what we want.
+                await browser.tabs.create({
+                    url: url,
+                    active: switchFocus,
+                    windowId: windows[0].id
+                })
+                // Focus the window we just created a tab for
+                await browser.windows.update(windows[0].id, { focused: true })
+                return
+            }
+        }
+        // otherwise make a new window of the correct type, if there are none
+        // existing or we don't want to use existing windows
+        await browser.windows.create({
+            incognito: incognito,
+            url: [ url ]
+        })
     }
 }

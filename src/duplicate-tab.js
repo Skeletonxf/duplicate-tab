@@ -146,8 +146,11 @@ export default class DuplicateTab {
                 }
                 return true
             }
-            if (data.selected === 'window') {
+            if (data.selected === 'window' || data.selected === 'move-window') {
                 await this.#createNewTabInWindow(url, incognito, false)
+                if (data.selected === 'move-window') {
+                    await browser.tabs.remove(id)
+                }
                 await this.#getAndCloseAdvancedDuplicationPageAndClearData()
                 return true
             }

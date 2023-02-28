@@ -9,12 +9,12 @@ let contextMenus = new ContextMenus()
 let shortcuts = new Shortcuts()
 let duplicateTab = new DuplicateTab()
 
-contextMenus.registerNormalContextMenu(duplicateTab.duplicate)
-contextMenus.registerAdvancedContextMenu(duplicateTab.launchAdvancedDuplication)
-shortcuts.registerKeyboardShortcuts(
-    duplicateTab.duplicate,
-    duplicateTab.launchAdvancedDuplication
-)
+let duplicate = duplicateTab.duplicate.bind(duplicateTab)
+let launchAdvancedDuplication = duplicateTab.launchAdvancedDuplication.bind(duplicateTab)
+
+contextMenus.registerNormalContextMenu(duplicate)
+contextMenus.registerAdvancedContextMenu(launchAdvancedDuplication)
+shortcuts.registerKeyboardShortcuts(duplicate, launchAdvancedDuplication)
 duplicateTab.registerTabChanges()
 duplicateTab.registerMessageListening()
 
@@ -27,14 +27,14 @@ function refreshContextMenus() {
         core.settings.doIf(
             'tabContext',
             defaults,
-            () => { contextMenus.addNormalContextMenu(duplicateTab.duplicate) },
-            () => { contextMenus.removeNormalContextMenu(duplicateTab.duplicate) }
+            () => { contextMenus.addNormalContextMenu(duplicate) },
+            () => { contextMenus.removeNormalContextMenu(duplicate) }
         )
         core.settings.doIf(
             'tabContextAdvanced',
             defaults,
-            () => { contextMenus.addAdvancedContextMenu(duplicateTab.launchAdvancedDuplication) },
-            () => { contextMenus.removeAdvancedContextMenu(duplicateTab.launchAdvancedDuplication) }
+            () => { contextMenus.addAdvancedContextMenu(launchAdvancedDuplication) },
+            () => { contextMenus.removeAdvancedContextMenu(launchAdvancedDuplication) }
         )
     }
 }

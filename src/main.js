@@ -43,18 +43,21 @@ browser.runtime.onInstalled.addListener(() => {
     console.log('Installed')
     refreshContextMenus()
     duplicateTab.clearSessionTabData()
+    duplicateTab.onInstalled()
 })
 
 browser.runtime.onStartup.addListener(() => {
     console.log('Started')
     duplicateTab.clearSessionTabData()
+    duplicateTab.onStartup()
 })
 
 browser.runtime.onSuspend.addListener(() => {
     console.log('Suspending')
     // FIXME: switch to session storage once supported
     // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/session
-    duplicateTab.clearSessionTabData()
+    // Can't clear session data here because we can suspend while our UI is
+    // still open if we're inactive for a while.
 })
 
 // Expose a way to refresh the context menus (which can only be done from this

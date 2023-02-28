@@ -2,6 +2,7 @@ import settings from '/src/settings.js'
 
 const advancedDuplicateTabPage = 'advanced-duplication-page-tab-id'
 const oldTabData = 'old-tab-data'
+const startups = 'startup-number'
 
 function browserSupportsDuplicate() {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1515455
@@ -52,7 +53,11 @@ export default class DuplicateTab {
         await settings.setKeyValue(oldTabData, {
             url: oldTab.url,
             incognito: oldTab.incognito,
-            id: oldTab.id
+            id: oldTab.id,
+            // bundle the current startup number with the tab ID so we can
+            // disambiguate tab IDs between different sessions in lieu of
+            // session storage API support
+            startup: await this.#getStartupCount(),
         })
         let tab = await browser.tabs.create({
             url: '/src/page/page.html',
@@ -78,6 +83,14 @@ export default class DuplicateTab {
         await settings.setKeyValue(oldTabData, null)
     }
 
+    async onStartup() {
+        await this.#incrementStartups()
+    }
+
+    async onInstalled() {
+        await this.#incrementStartups()
+    }
+
     async registerTabChanges() {
         // It would be nice to not have to listen to active tab changes except
         // for ones that belong to our extension, but I don't see any way to
@@ -89,7 +102,17 @@ export default class DuplicateTab {
                 if (id !== null && id !== undefined && previousTabId === id) {
                     // If the advanced duplication page is no longer active, we
                     // should automatically remove it.
-                    await this.#closeAdvancedDuplicationPageAndClearData(id)
+                    const { startup } = await settings.getKeyValue(oldTabData)
+                    let startupNow = await this.#getStartupCount()
+                    if (startup === startupNow) {
+                        await this.#closeAdvancedDuplicationPageAndClearData(id)
+                    } else {
+                        console.error(
+                            'Session in which tab ID was saved is most likely not the current session',
+                            id, startup, startupNow
+                        )
+                        await this.clearSessionTabData()
+                    }
                 }
             } catch (error) {
                 console.error('Error listening to onActivated changes', error)
@@ -199,5 +222,33 @@ export default class DuplicateTab {
             incognito: incognito,
             url: [ url ]
         })
+    }
+
+    async #getStartupCount() {
+        let count = await settings.getKeyValue(startups)
+        if (count === null || count === undefined) {
+            return -1
+        } else {
+            return count
+        }
+    }
+
+    async #incrementStartups() {
+        let count = await settings.getKeyValue(startups)
+        if (count !== null && count !== undefined) {
+            // Cycle back to 0 because we don't actually need to track the real
+            // number, just a second bit of data to disambiguate tab IDs between
+            // sessions
+            if (count > 100) {
+                console.log('Startup #', 0)
+                await settings.setKeyValue(startups, 0)
+            } else {
+                console.log('Startup #', count + 1)
+                await settings.setKeyValue(startups, count + 1)
+            }
+        } else {
+            console.log('Startup #', 0)
+            await settings.setKeyValue(startups, 0)
+        }
     }
 }

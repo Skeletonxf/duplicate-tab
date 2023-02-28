@@ -1,4 +1,5 @@
 import settings from '/src/settings.js'
+import console from '/src/logger.js'
 
 const advancedDuplicateTabPage = 'advanced-duplication-page-tab-id'
 const oldTabData = 'old-tab-data'

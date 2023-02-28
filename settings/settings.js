@@ -1,3 +1,4 @@
+import console from '/src/logger.js'
 import core from '/core/script.js'
 import defaults from '/settings/defaults.js'
 
@@ -94,5 +95,5 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isAllowed) {
             document.querySelector('#privateBrowsingPermission').classList.remove('hidden')
         }
-    }).catch(core.expect('Querying incognito access'))
+    }).catch((error) => console.error('Querying incognito access failed', error))
 })

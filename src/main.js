@@ -1,5 +1,5 @@
+import console from '/src/logger.js'
 import core from '/core/script.js'
-//import duplication from '/background/duplication.js'
 import defaults from '/settings/defaults.js'
 import ContextMenus from '/src/context-menus.js'
 import Shortcuts from '/src/shortcuts.js'
@@ -79,7 +79,7 @@ browser.runtime.onConnect.addListener((port) => {
         port.onMessage.addListener((msg) => {
             if (msg.openOptionsPage) {
                 browser.runtime.openOptionsPage().then(() => {
-                }).catch(core.expect('Failed to open options page'))
+                }).catch((error) => console.error('Failed to open options page', error))
             }
         })
     }

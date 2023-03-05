@@ -74,13 +74,22 @@ browser.runtime.onConnect.addListener((port) => {
 
 // Expose a way to open the options page from the content script when informing
 // user of settings that need modification
-browser.runtime.onConnect.addListener((port) => {
-    if (port.name === 'optionsPage') {
-        port.onMessage.addListener((msg) => {
-            if (msg.openOptionsPage) {
-                browser.runtime.openOptionsPage().then(() => {
-                }).catch((error) => console.error('Failed to open options page', error))
-            }
-        })
+let openOptionsPage = async () => {
+    try {
+        await browser.runtime.openOptionsPage()
+    } catch (error) {
+        console.error('Failed to open options page', error)
+    }
+    return true
+}
+browser.runtime.onMessage.addListener((data, sender) => {
+    // From MDN: If you only want the listener to respond to messages of a
+    // certain type, you must define the listener as a non-async function,
+    // and return a Promise only for the messages the listener is meant to
+    // respond to and otherwise return false or undefined:
+    if (data.openOptionsPage === true) {
+        return openOptionsPage()
+    } else {
+        return false;
     }
 })

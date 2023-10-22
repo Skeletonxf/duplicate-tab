@@ -1,6 +1,6 @@
 # Duplicate tab
 
-Duplicates the current tab when you click the icon. This is a firefox web extension: https://addons.mozilla.org/en-GB/android/addon/duplicate_tab/
+Duplicates the current tab when you click the icon. This is a firefox web extension: https://addons.mozilla.org/en-GB/firefox/addon/duplicate_tab/
 
 The main focus of this project has moved to keyboard shortcuts now that Firefox 57 supports a right click menu by default. From Firefox 60 you can customize these shortcuts in browser.
 

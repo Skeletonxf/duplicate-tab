@@ -1,6 +1,10 @@
 import defaults from '/settings/defaults.js'
 
 class Settings {
+    constructor(storageArea /* local | session */) {
+        this.storageArea = storageArea
+    }
+
     /**
      * Returns the value of a key in local storage, falling back to default
      * values if it is missing.
@@ -8,7 +12,7 @@ class Settings {
     async getKeyValue(
         setting /* string */
     ) /* -> depends on what is stored */ {
-        let results = await browser.storage.local.get(setting)
+        let results = await this.storageArea.get(setting)
         if (setting in results) {
             return results[setting]
         } else {
@@ -23,7 +27,7 @@ class Settings {
     async getMultipleKeyValues(
         settings /* [string] */
     ) /* -> {depends on what is stored} */ {
-        let results = await browser.storage.local.get(settings)
+        let results = await this.storageArea.get(settings)
         for (const setting of settings) {
             let found = false;
             if (setting in results) {
@@ -42,10 +46,14 @@ class Settings {
     async setKeyValue(key, /* string */ value /* anything JSONifiable */) {
         let setting = {}
         setting[key] = value
-        await browser.storage.local.set(setting)
+        await this.storageArea.set(setting)
     }
 }
 
-let instance = new Settings()
+let local = new Settings(browser.storage.local)
+let session = new Settings(browser.storage.session)
 
-export default instance
+export default {
+    local: local,
+    session: session
+}

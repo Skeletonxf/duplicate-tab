@@ -3,7 +3,6 @@ import console from '/src/logger.js'
 
 const advancedDuplicateTabPage = 'advanced-duplication-page-tab-id'
 const oldTabData = 'old-tab-data'
-const startups = 'startup-number'
 
 function browserSupportsDuplicate() {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1515455
@@ -20,6 +19,7 @@ export default class DuplicateTab {
             return await this.#createNewTab(oldTab)
         }
         const { switchFocus, duplicateLocation } = await settings
+            .local
             .getMultipleKeyValues(['switchFocus', 'duplicateLocation'])
         let duplicateProperties = {
             active: switchFocus
@@ -43,7 +43,7 @@ export default class DuplicateTab {
     async #createNewTab(oldTab) {
         // duplicate by creating new tab with same URL
         // we set the active field depending on the switch focus setting
-        let switchFocus = await settings.getKeyValue('switchFocus')
+        let switchFocus = await settings.local.getKeyValue('switchFocus')
         await browser.tabs.create({
             url: oldTab.url,
             active: switchFocus
@@ -51,14 +51,12 @@ export default class DuplicateTab {
     }
 
     async launchAdvancedDuplication(oldTab /* Tab */) {
-        await settings.setKeyValue(oldTabData, {
+        await settings.session.setKeyValue(oldTabData, {
             url: oldTab.url,
             incognito: oldTab.incognito,
+            // Using session storage so if we store the tab ID it remains
+            // unique until the session is reset
             id: oldTab.id,
-            // bundle the current startup number with the tab ID so we can
-            // disambiguate tab IDs between different sessions in lieu of
-            // session storage API support
-            startup: await this.#getStartupCount(),
         })
         let tab = await browser.tabs.create({
             url: '/src/page/page.html',
@@ -66,30 +64,22 @@ export default class DuplicateTab {
             // Place the duplicate WebExtension page just after the tab
             index: oldTab.index + 1
         })
-        // Since we could be unloaded while the page is open, save the tab ID
-        // to local storage.
-        // Once session storage is supported, we should use that instead because
-        // then it will match the storage duration to how long the tab ID is
-        // valid for.
-        // This does create a minor edge case of users closing their
-        // browser with reopening windows enabled and then Duplicate Tab losing
-        // the advanced duplication tab ID, but this is way less bad than
-        // Duplicate Tab persisting a tab ID that clashes with a tab in a new
-        // session and closing that one instead.
-        await settings.setKeyValue(advancedDuplicateTabPage, tab.id)
+        // Since we could be unloaded while the page is open, save the advanced
+        // duplication page tab ID to session storage too.
+        await settings.session.setKeyValue(advancedDuplicateTabPage, tab.id)
     }
 
     async clearSessionTabData() {
-        await settings.setKeyValue(advancedDuplicateTabPage, null)
-        await settings.setKeyValue(oldTabData, null)
+        await settings.session.setKeyValue(advancedDuplicateTabPage, null)
+        await settings.session.setKeyValue(oldTabData, null)
     }
 
     async onStartup() {
-        await this.#incrementStartups()
+
     }
 
     async onInstalled() {
-        await this.#incrementStartups()
+
     }
 
     async registerTabChanges() {
@@ -99,22 +89,16 @@ export default class DuplicateTab {
         browser.tabs.onActivated.addListener(async (activeInfo) => {
             try {
                 const { previousTabId } = activeInfo
-                let id = await settings.getKeyValue(advancedDuplicateTabPage)
+                let id = await settings.session.getKeyValue(advancedDuplicateTabPage)
                 if (id !== null && id !== undefined && previousTabId === id) {
                     // If the advanced duplication page is no longer active, we
                     // should automatically remove it.
-                    const { startup } = await settings.getKeyValue(oldTabData)
-                    let startupNow = await this.#getStartupCount()
-                    if (startup === startupNow) {
-                        await this.#closeAdvancedDuplicationPageAndClearData(id)
-                    } else {
-                        console.error(
-                            'Session in which tab ID was saved is most likely not the current session',
-                            id, startup, startupNow
-                        )
-                        await this.clearSessionTabData()
-                    }
+                    await this.#closeAdvancedDuplicationPageAndClearData(id)
                 }
+                // Minor edge case of someone closing the browser and set to
+                // retain tabs while the Advanced Duplicate Tab page is open
+                // but not a lot we can do about that given using local storage
+                // has a lot of risks in tab ID collisions.
             } catch (error) {
                 console.error('Error listening to onActivated changes', error)
             }
@@ -129,7 +113,7 @@ export default class DuplicateTab {
     }
 
     async #getAndCloseAdvancedDuplicationPageAndClearData() {
-        let id = await settings.getKeyValue(advancedDuplicateTabPage)
+        let id = await settings.session.getKeyValue(advancedDuplicateTabPage)
         if (id !== null && id !== undefined) {
             await this.#closeAdvancedDuplicationPageAndClearData(id)
         }
@@ -151,7 +135,7 @@ export default class DuplicateTab {
 
     async #respondToPage(data, sender) {
         try {
-            const { url, incognito, id } = await settings.getKeyValue(oldTabData)
+            const { url, incognito, id } = await settings.session.getKeyValue(oldTabData)
             if (data.selected === 'normal') {
                 if (incognito === false) {
                     await this.#duplicateSameTypeOfTab(id)
@@ -198,7 +182,7 @@ export default class DuplicateTab {
 
     async #createNewTabInWindow(url, incognito, useExistingWindows) {
         if (useExistingWindows) {
-            let switchFocus = await settings.getKeyValue('switchFocus')
+            let switchFocus = await settings.local.getKeyValue('switchFocus')
             let windows = (await browser.windows.getAll({
                 windowTypes: ['normal']
             })).filter(w => w.incognito === incognito)
@@ -223,33 +207,5 @@ export default class DuplicateTab {
             incognito: incognito,
             url: [ url ]
         })
-    }
-
-    async #getStartupCount() {
-        let count = await settings.getKeyValue(startups)
-        if (count === null || count === undefined) {
-            return -1
-        } else {
-            return count
-        }
-    }
-
-    async #incrementStartups() {
-        let count = await settings.getKeyValue(startups)
-        if (count !== null && count !== undefined) {
-            // Cycle back to 0 because we don't actually need to track the real
-            // number, just a second bit of data to disambiguate tab IDs between
-            // sessions
-            if (count > 100) {
-                console.log('Startup #', 0)
-                await settings.setKeyValue(startups, 0)
-            } else {
-                console.log('Startup #', count + 1)
-                await settings.setKeyValue(startups, count + 1)
-            }
-        } else {
-            console.log('Startup #', 0)
-            await settings.setKeyValue(startups, 0)
-        }
     }
 }

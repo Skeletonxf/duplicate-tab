@@ -1,66 +1,77 @@
 import console from '/src/logger.js'
-import core from '/core/script.js'
-import defaults from '/settings/defaults.js'
+import settings from '/src/settings.js'
 
-let labels
+let settingKeys = [
+    'switchFocus',
+    'tabContext',
+    'tabContextAdvanced'
+]
 
-let port = browser.runtime.connect({
-    name: 'contextMenus'
-})
+/**
+ * Syncs the property checkboxes on the webpage to the default values
+ * of these properties from local storage or their default value.
+ */
+let syncPage = async (properties /* [string] */) => {
+    for (let property of properties) {
+        let value = await settings.local.getKeyValue(property)
+        document.querySelector('#' + property).checked = value
+    }
+}
 
-document.addEventListener("DOMContentLoaded", () => {
+/**
+ * Syncs the corresponding local storage setting
+ * to this value on the page
+ */
+let syncLocalStorage = async (property) => {
+    await settings.local.setKeyValue(property, document.querySelector('#' + property).checked)
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     // apply boolean settings to page
-    core.settings.syncPage(defaults, ['duplicateLocation'])
+    try {
+        await syncPage(settingKeys)
+    } catch (error) {
+        console.error('Error syncing page to current setting values', error)
+    }
+
+    for (let property of settingKeys) {
+        document.querySelector('#' + property).addEventListener('change', async () => {
+            try {
+                await syncLocalStorage(property)
+                let port = browser.runtime.connect({
+                    name: 'contextMenus'
+                })
+                if (property === 'tabContext' || property === 'tabContextAdvanced') {
+                    port.postMessage({
+                        refreshContextMenus: true
+                    })
+                }
+            } catch (error) {
+                console.error('Error syncing page to current setting values', error)
+            }
+        })
+    }
 
     // handle duplicate location setting explicitly
     let browserDefault = document.querySelector('#duplicateLocationBrowser')
     let right = document.querySelector('#duplicateLocationRight')
     let afterCurrent = document.querySelector('#duplicateLocationAfterCurrent')
 
-    browser.storage.local.get('duplicateLocation').then((result) => {
-        let setting = defaults['duplicateLocation']
-        if ('duplicateLocation' in result) {
-            setting = result.duplicateLocation
-        }
-        for (let radioButton of [browserDefault, right, afterCurrent]) {
-            if (setting === radioButton.value) {
-                radioButton.checked = true
-            }
-        }
-    })
-
-    for (let property in defaults) {
-        // handle the duplicate location explicitly as it is a 3 way setting
-        if (property === 'duplicateLocation') {
-            let update = () => {
-                for (let radioButton of [browserDefault, right, afterCurrent]) {
-                    if (radioButton.checked) {
-                        browser.storage.local.set({
-                            duplicateLocation: radioButton.value
-                        })
-                    }
-                }
-            }
-            browserDefault.addEventListener('change', update)
-            right.addEventListener('change', update)
-            afterCurrent.addEventListener('change', update)
-            continue
-        }
-        // handle all boolean settings
-        let toggle = document.querySelector("#" + property)
-        toggle.addEventListener('change', () => {
-            // Propagate the new state of this toggle to the local storage
-            let setting = {}
-            setting[property] = toggle.checked
-            browser.storage.local.set(setting)
-
-            if (property === 'tabContext' || property === 'tabContextAdvanced') {
-                port.postMessage({
-                    refreshContextMenus: true
-                })
-            }
-        })
+    let duplicateLocation = await settings.local.getKeyValue('duplicateLocation')
+    for (let radioButton of [browserDefault, right, afterCurrent]) {
+        radioButton.checked = duplicateLocation === radioButton.value
     }
+
+    let updateRadioGroup = async () => {
+        for (let radioButton of [browserDefault, right, afterCurrent]) {
+            if (radioButton.checked) {
+                await settings.local.setKeyValue('duplicateLocation', radioButton.value)
+            }
+        }
+    }
+    browserDefault.addEventListener('change', updateRadioGroup)
+    right.addEventListener('change', updateRadioGroup)
+    afterCurrent.addEventListener('change', updateRadioGroup)
 
     {
       // Disable settings that don't work on Android
@@ -91,9 +102,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    browser.extension.isAllowedIncognitoAccess().then((isAllowed) => {
-        if (!isAllowed) {
+    try {
+        let isAllowedPrivateBrowsing = await browser.extension.isAllowedIncognitoAccess()
+        if (!isAllowedPrivateBrowsing) {
             document.querySelector('#privateBrowsingPermission').classList.remove('hidden')
         }
-    }).catch((error) => console.error('Querying incognito access failed', error))
+    } catch (error) {
+        console.error('Querying incognito access failed', error)
+    }
 })

@@ -1,6 +1,5 @@
 import console from '/src/logger.js'
-import core from '/core/script.js'
-import defaults from '/settings/defaults.js'
+import settings from '/src/settings.js'
 import ContextMenus from '/src/context-menus.js'
 import Shortcuts from '/src/shortcuts.js'
 import DuplicateTab from '/src/duplicate-tab.js'
@@ -21,21 +20,26 @@ duplicateTab.registerMessageListening()
 // listen for clicks on the icon to run the duplicate function
 browser.action.onClicked.addListener(duplicateTab.duplicate)
 
-function refreshContextMenus() {
+let refreshContextMenus = async () => {
     // will be undefined on android
     if (browser.contextMenus) {
-        core.settings.doIf(
-            'tabContext',
-            defaults,
-            () => { contextMenus.addNormalContextMenu(duplicate) },
-            () => { contextMenus.removeNormalContextMenu(duplicate) }
-        )
-        core.settings.doIf(
-            'tabContextAdvanced',
-            defaults,
-            () => { contextMenus.addAdvancedContextMenu(launchAdvancedDuplication) },
-            () => { contextMenus.removeAdvancedContextMenu(launchAdvancedDuplication) }
-        )
+        try {
+            const { tabContext, tabContextAdvanced } = await settings
+                .local
+                .getMultipleKeyValues(['tabContext', 'tabContextAdvanced' ])
+            if (tabContext === true) {
+                contextMenus.addNormalContextMenu(duplicate)
+            } else {
+                contextMenus.removeNormalContextMenu(duplicate)
+            }
+            if (tabContextAdvanced === true) {
+                contextMenus.addAdvancedContextMenu(launchAdvancedDuplication)
+            } else {
+                contextMenus.removeAdvancedContextMenu(launchAdvancedDuplication)
+            }
+        } catch (error) {
+            console.error('Failed to get UI settings', error)
+        }
     }
 }
 

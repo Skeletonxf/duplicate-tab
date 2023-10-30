@@ -30,22 +30,28 @@ export default class ContextMenus {
     }
 
     #registerContextMenu(id, listener) {
-        browser.contextMenus.onClicked.addListener((info, tab) => {
-            if (info.menuItemId === id) {
-                listener(tab)
-            }
-        })
+        if (browser.contextMenus) {
+            browser.contextMenus.onClicked.addListener((info, tab) => {
+                if (info.menuItemId === id) {
+                    listener(tab)
+                }
+            })
+        }
     }
 
     #addContextMenu(id, title, listener) {
-        browser.contextMenus.create({
-            id: id,
-            title: title,
-            contexts: [ 'tab' ]
-        })
+        if (browser.contextMenus) {
+            browser.contextMenus.create({
+                id: id,
+                title: title,
+                contexts: [ 'tab' ]
+            })
+        }
     }
 
     #removeContextMenu(id, listener) {
-        browser.contextMenus.remove(id)
+        if (browser.contextMenus) {
+            browser.contextMenus.remove(id)
+        }
     }
 }

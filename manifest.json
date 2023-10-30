@@ -20,7 +20,7 @@
 
   "action": {
     "default_icon": "icons/fork.svg",
-    "default_title": "Duplicate tab",
+    "default_title": "Duplicate Tab",
     "theme_icons": [
         {
             "dark": "icons/fork.svg",

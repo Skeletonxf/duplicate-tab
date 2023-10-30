@@ -1,4 +1,4 @@
-# Duplicate tab
+# Duplicate Tab
 
 Duplicates the current tab when you click the icon. This is a firefox web extension: https://addons.mozilla.org/en-GB/firefox/addon/duplicate_tab/
 

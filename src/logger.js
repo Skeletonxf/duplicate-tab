@@ -1,4 +1,4 @@
-const IS_DEBUG = true
+const IS_DEBUG = false
 const logger = {}
 
 if (IS_DEBUG) {

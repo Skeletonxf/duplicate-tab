@@ -1,3 +1,7 @@
+* {
+    font-family: sans-serif;
+}
+
 .setting {
   display: flex;
   flex-direction: row;

@@ -18,7 +18,7 @@ duplicateTab.registerTabChanges()
 duplicateTab.registerMessageListening()
 
 // listen for clicks on the icon to run the duplicate function
-browser.action.onClicked.addListener(duplicateTab.duplicate)
+browser.action.onClicked.addListener(duplicate)
 
 let refreshContextMenus = async () => {
     // will be undefined on android

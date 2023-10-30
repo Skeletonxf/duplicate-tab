@@ -19,7 +19,6 @@
   },
 
   "action": {
-    "browser_style": true,
     "default_icon": "icons/fork.svg",
     "default_title": "Duplicate tab",
     "theme_icons": [

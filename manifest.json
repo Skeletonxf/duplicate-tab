@@ -5,7 +5,7 @@
   "name": "Duplicate Tab",
   "version": "3.0",
 
-  "permissions": ["contextMenus", "storage", "activeTab"],
+  "permissions": ["contextMenus", "storage", "activeTab", "scripting"],
 
   "background": {
     "page": "/background-page.html"

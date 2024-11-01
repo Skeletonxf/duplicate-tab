@@ -15,6 +15,10 @@ buttons.set('move-window', {
     id: 'move-window',
     shortcuts: ['m', '4']
 })
+buttons.set('normal-and-navigate-back', {
+    id: 'normal-and-navigate-back',
+    shortcuts: ['b', '5']
+})
 
 buttons.forEach((b) => b.element = document.getElementById(b.id))
 

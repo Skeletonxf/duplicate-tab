@@ -47,8 +47,7 @@ buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
         type: 'page',
         getPageData: true
     })
-    const { url } = response
-    const { oldTabIsIncognito } = response
+    const { url, oldTabIsIncognito, oldTabHasHistory } = response
 
     document.getElementById('page-url').textContent += (url)
     document.getElementById('page-url-suffix').classList.remove('hidden')
@@ -88,6 +87,10 @@ buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
         buttons.get('normal-and-navigate-back').element.classList.remove('normal-style')
         let navigateBackTabNav = document.querySelector('#normal-and-navigate-back-tab-name')
         navigateBackTabNav.textContent = 'Private Browsing'
+    }
+    if (!oldTabHasHistory) {
+        // nothing to navigate back with so delete the option
+        buttons.get('normal-and-navigate-back').deleter.run()
     }
     const { allowedIncognitoAccess } = response
     if (allowedIncognitoAccess === false) {

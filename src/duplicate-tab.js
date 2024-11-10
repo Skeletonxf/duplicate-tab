@@ -182,10 +182,33 @@ export default class DuplicateTab {
                 return true
             }
             if (data.getPageData === true) {
+                let oldTabHasHistory = false
+                try {
+                    let injectionResult = (await browser.scripting.executeScript({
+                        target: {
+                            tabId: id
+                        },
+                        // The same code from the file as a function doesn't
+                        // seem able to return the last expression and is always
+                        // undefined, so we need to use a file for this even
+                        // though we just need to execute a single line
+                        files: [ 'src/get-history.js' ]
+                    }))[0]
+                    // Length is 1 when history is empty due to current tab
+                    // FIXME: This doesn't work properly if there are pages
+                    // forward of the current page, as they are included
+                    // in the history too even when we have nothing to go back
+                    // to. `navigation.canGoBack` seems what we actually want
+                    // but it has not been implemented at the time of writing
+                    oldTabHasHistory = injectionResult.result > 1
+                } catch (error) {
+                    console.error('Error checking for history in original tab', error)
+                }
                 return {
                     url: url,
                     oldTabIsIncognito: incognito,
-                    allowedIncognitoAccess: await browser.extension.isAllowedIncognitoAccess()
+                    allowedIncognitoAccess: await browser.extension.isAllowedIncognitoAccess(),
+                    oldTabHasHistory: oldTabHasHistory,
                 }
             }
         } catch (error) {

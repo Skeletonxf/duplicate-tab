@@ -84,6 +84,10 @@ buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
         buttons.get('window').element.classList.remove('normal-style')
         buttons.get('move-window').element.classList.add('private-style')
         buttons.get('move-window').element.classList.remove('normal-style')
+        buttons.get('normal-and-navigate-back').element.classList.add('private-style')
+        buttons.get('normal-and-navigate-back').element.classList.remove('normal-style')
+        let navigateBackTabNav = document.querySelector('#normal-and-navigate-back-tab-name')
+        navigateBackTabNav.textContent = 'Private Browsing'
     }
     const { allowedIncognitoAccess } = response
     if (allowedIncognitoAccess === false) {

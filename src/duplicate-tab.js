@@ -136,7 +136,20 @@ export default class DuplicateTab {
     async #respondToPage(data, sender) {
         try {
             const { url, incognito, id } = await settings.session.getKeyValue(oldTabData)
-            if (data.selected === 'normal' || data.selected === 'normal-and-navigate-back') {
+            let goBack = async () => {
+                // We can only try to navigate back on the old tab because
+                // we need to have the activeTab permission as we're not
+                // requesting the generic scripting permission from the user
+                await browser.scripting.executeScript({
+                    target: {
+                        tabId: id
+                    },
+                    func: () => {
+                        window.history.back()
+                    }
+                })
+            }
+            if (data.selected === 'normal' || (data.selected === 'normal-and-navigate-back' && !incognito)) {
                 if (incognito === false) {
                     await this.#duplicateSameTypeOfTab(id)
                 } else {
@@ -144,26 +157,19 @@ export default class DuplicateTab {
                     await this.#getAndCloseAdvancedDuplicationPageAndClearData()
                 }
                 if (data.selected === 'normal-and-navigate-back') {
-                    // We can only try to navigate back on the old tab because
-                    // we need to have the activeTab permission as we're not
-                    // requesting the generic scripting permission from the user
-                    await browser.scripting.executeScript({
-                        target: {
-                            tabId: id
-                        },
-                        func: () => {
-                            window.history.back()
-                        }
-                    })
+                    await goBack()
                 }
                 return true
             }
-            if (data.selected === 'private') {
+            if (data.selected === 'private' || (data.selected === 'normal-and-navigate-back' && incognito)) {
                 if (incognito === true) {
                     await this.#duplicateSameTypeOfTab(id)
                 } else {
                     await this.#createNewTabInWindow(url, true, true)
                     await this.#getAndCloseAdvancedDuplicationPageAndClearData()
+                }
+                if (data.selected === 'normal-and-navigate-back') {
+                    await goBack()
                 }
                 return true
             }

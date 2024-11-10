@@ -15,10 +15,6 @@ buttons.set('move-window', {
     id: 'move-window',
     shortcuts: ['m', '4']
 })
-buttons.set('normal-and-navigate-back', {
-    id: 'normal-and-navigate-back',
-    shortcuts: ['b', '5']
-})
 
 buttons.forEach((b) => b.element = document.getElementById(b.id))
 
@@ -47,7 +43,8 @@ buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
         type: 'page',
         getPageData: true
     })
-    const { url, oldTabIsIncognito, oldTabHasHistory } = response
+    const { url } = response
+    const { oldTabIsIncognito } = response
 
     document.getElementById('page-url').textContent += (url)
     document.getElementById('page-url-suffix').classList.remove('hidden')
@@ -83,14 +80,6 @@ buttons.forEach((b) => b.deleter = new IdempotentElementDeleter(b.element))
         buttons.get('window').element.classList.remove('normal-style')
         buttons.get('move-window').element.classList.add('private-style')
         buttons.get('move-window').element.classList.remove('normal-style')
-        buttons.get('normal-and-navigate-back').element.classList.add('private-style')
-        buttons.get('normal-and-navigate-back').element.classList.remove('normal-style')
-        let navigateBackTabNav = document.querySelector('#normal-and-navigate-back-tab-name')
-        navigateBackTabNav.textContent = 'Private Browsing'
-    }
-    if (!oldTabHasHistory) {
-        // nothing to navigate back with so delete the option
-        buttons.get('normal-and-navigate-back').deleter.run()
     }
     const { allowedIncognitoAccess } = response
     if (allowedIncognitoAccess === false) {

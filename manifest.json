@@ -3,7 +3,7 @@
   "homepage_url": "https://github.com/Skeletonxf/duplicate-tab/",
   "manifest_version": 3,
   "name": "Duplicate Tab",
-  "version": "3.0",
+  "version": "3.1",
 
   "permissions": ["contextMenus", "storage", "activeTab"],
 
@@ -14,7 +14,10 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "{54fa1e34-a0ad-4526-a81b-b06139adf332}",
-      "strict_min_version": "115.0"
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
 
